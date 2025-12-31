@@ -22,7 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('grappelli/', include('grappelli.urls')),
+    # path('grappelli/', include('grappelli.urls')),  # Commented out - grappelli not installed
     path('admin/', admin.site.urls),
     path('', include('veteran_app.urls')),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
