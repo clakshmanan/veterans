@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')  # REQUIRED - No default for security
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='veterans-4751.onrender.com,localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -191,7 +191,7 @@ SESSION_COOKIE_AGE = 3600  # 1 hour
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.onrender.com', cast=Csv())
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://veterans-4751.onrender.com', cast=Csv())
 
 # File Upload Security
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
