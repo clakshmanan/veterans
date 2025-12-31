@@ -7,30 +7,24 @@ echo "Starting build process..."
 echo "Installing dependencies..."
 pip install -r requirements.txt
 
+# Verify installations
+echo "Verifying installations..."
+python -c "import django; print(f'Django {django.get_version()} installed')"
+python -c "import gunicorn; print('Gunicorn installed')"
+
 # Run migrations
 echo "Running migrations..."
-python manage.py migrate
+python manage.py migrate --noinput
 
 # Collect static files
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Seed initial data (master data)
+# Seed initial data with error handling
 echo "Seeding master data..."
-python manage.py seed_data
+python manage.py seed_data || echo "Warning: seed_data failed"
 
-# Seed state users (optional - comment out if not needed)
 echo "Creating state users..."
-python manage.py seed_state_users
-
-# Seed sample members (optional - comment out if not needed in production)
-echo "Creating sample members..."
-python manage.py create_accounts_user
-
-echo "Setting up state admin permissions..."
-python manage.py state_admin_permissions
-
-echo "Fixing state head permissions..."
-python manage.py fix_state_permissions
+python manage.py seed_state_users || echo "Warning: seed_state_users failed"
 
 echo "Build completed successfully!"
