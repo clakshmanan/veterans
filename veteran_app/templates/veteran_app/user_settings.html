@@ -1,0 +1,178 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2><i class="fas fa-cog"></i> Account Settings</h2>
+        <p class="text-muted">Manage your account preferences and security</p>
+    </div>
+    <a href="{% url 'user_profile' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Profile
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- Password Change -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-key"></i> Change Password</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'change_password' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="old_password" class="form-control" required maxlength="128" autocomplete="current-password">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="new_password1" class="form-control" required minlength="8" maxlength="128" autocomplete="new-password">
+                        <div class="form-text">Password must be at least 8 characters long</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="new_password2" class="form-control" required minlength="8" maxlength="128" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-4"><strong>Username:</strong></div>
+                    <div class="col-sm-8">{{ user.username }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-4"><strong>Account Type:</strong></div>
+                    <div class="col-sm-8">
+                        {% if user.is_superuser %}
+                            <span class="badge bg-danger">Superadmin</span>
+                        {% elif user.state_profile %}
+                            <span class="badge bg-info">State Admin</span>
+                        {% elif user.veteran_profile %}
+                            <span class="badge bg-success">Veteran</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Regular User</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-4"><strong>Member Since:</strong></div>
+                    <div class="col-sm-8">{{ user.date_joined|date:"F d, Y" }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-4"><strong>Last Login:</strong></div>
+                    <div class="col-sm-8">{{ user.last_login|date:"F d, Y H:i"|default:"Never" }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-4"><strong>Status:</strong></div>
+                    <div class="col-sm-8">
+                        {% if user.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <!-- Preferences -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-sliders-h"></i> Preferences</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'update_preferences' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="email_notifications" id="emailNotifications" checked>
+                            <label class="form-check-label" for="emailNotifications">
+                                Email Notifications
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="subscription_reminders" id="subscriptionReminders" checked>
+                            <label class="form-check-label" for="subscriptionReminders">
+                                Subscription Reminders
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Preferences
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Security -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-shield-alt"></i> Security</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>Two-Factor Authentication</h6>
+                    {% if user.two_factor.is_enabled %}
+                        <p class="text-success"><i class="fas fa-check-circle"></i> 2FA is enabled</p>
+                    {% else %}
+                        <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> 2FA is not enabled</p>
+                    {% endif %}
+                    <a href="{% url 'setup_2fa' %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-shield-alt"></i> Manage 2FA
+                    </a>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Login Activity</h6>
+                    <p class="text-muted">Last login: {{ user.last_login|date:"F d, Y H:i"|default:"Never" }}</p>
+                </div>
+                
+                {% if not user.is_superuser %}
+                <div class="mb-3">
+                    <h6>Account Status</h6>
+                    {% if user.state_profile %}
+                        {% if user.state_profile.approved %}
+                            <p class="text-success"><i class="fas fa-check-circle"></i> Your state admin account is approved</p>
+                        {% else %}
+                            <p class="text-warning"><i class="fas fa-clock"></i> Your account is pending approval</p>
+                        {% endif %}
+                    {% elif user.veteran_profile %}
+                        {% if user.veteran_profile.approved %}
+                            <p class="text-success"><i class="fas fa-check-circle"></i> Your veteran account is approved</p>
+                        {% else %}
+                            <p class="text-warning"><i class="fas fa-clock"></i> Your account is pending approval</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Security Tips:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Use a strong, unique password</li>
+                        <li>Don't share your login credentials</li>
+                        <li>Log out when using shared computers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Manage Users</h2>
+        <p class="text-muted">Approve or disapprove state admin users</p>
+    </div>
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- State Users Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-users"></i> State Admin Users</h5>
+    </div>
+    <div class="card-body">
+        {% if state_users %}
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" id="stateUserSearch" class="form-control" placeholder="Search state users...">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover" id="stateUsersTable">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Username</th>
+                        <th><i class="fas fa-envelope"></i> Email</th>
+                        <th><i class="fas fa-map-marker-alt"></i> State</th>
+                        <th><i class="fas fa-toggle-on"></i> Status</th>
+                        <th><i class="fas fa-calendar-alt"></i> Created</th>
+                        <th><i class="fas fa-tools"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_state in state_users %}
+                    <tr>
+                        <td>
+                            <i class="fas fa-user"></i> {{ user_state.user.username }}
+                        </td>
+                        <td>{{ user_state.user.email }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ user_state.state.name }} ({{ user_state.state.code }})</span>
+                        </td>
+                        <td>
+                            {% if user_state.approved %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i> Approved
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user_state.created_at|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if user_state.approved %}
+                                <form method="post" action="{% url 'disapprove_user' user_state.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-warning" 
+                                            onclick="return confirm('Are you sure you want to disapprove this user?')">
+                                        <i class="fas fa-times-circle"></i> Disapprove
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'approve_user' user_state.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check-circle"></i> Approve
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No state admin users found.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Veteran Users Section -->
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="fas fa-user-shield"></i> Veteran Users</h5>
+    </div>
+    <div class="card-body">
+        {% if veteran_users %}
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" id="veteranUserSearch" class="form-control" placeholder="Search veteran users...">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover" id="veteranUsersTable">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Username</th>
+                        <th><i class="fas fa-id-card"></i> Veteran Name</th>
+                        <th><i class="fas fa-map-marker-alt"></i> State</th>
+                        <th><i class="fas fa-toggle-on"></i> Status</th>
+                        <th><i class="fas fa-calendar-alt"></i> Created</th>
+                        <th><i class="fas fa-tools"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for veteran_user in veteran_users %}
+                    <tr>
+                        <td>
+                            <i class="fas fa-user"></i> {{ veteran_user.user.username }}
+                        </td>
+                        <td>{{ veteran_user.veteran_member.name }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ veteran_user.veteran_member.state.name }}</span>
+                        </td>
+                        <td>
+                            {% if veteran_user.approved %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i> Approved
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ veteran_user.created_at|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if veteran_user.approved %}
+                                <form method="post" action="{% url 'disapprove_veteran_user' veteran_user.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-warning" 
+                                            onclick="return confirm('Are you sure you want to disapprove this veteran user?')">
+                                        <i class="fas fa-times-circle"></i> Disapprove
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'approve_veteran_user' veteran_user.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check-circle"></i> Approve
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No veteran users found.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Regular Users Section -->
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0"><i class="fas fa-user"></i> Regular Users (No State Assignment)</h5>
+    </div>
+    <div class="card-body">
+        {% if regular_users %}
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" id="regularUserSearch" class="form-control" placeholder="Search regular users...">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover" id="regularUsersTable">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Date Joined</th>
+                        <th>Last Login</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in regular_users %}
+                    <tr>
+                        <td><i class="fas fa-user"></i> {{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.date_joined|date:"Y-m-d" }}</td>
+                        <td>{{ user.last_login|date:"Y-m-d H:i"|default:"Never" }}</td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No regular users found.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4">
+    <div class="alert alert-info">
+        <h6><i class="fas fa-info-circle"></i> User Management Guide:</h6>
+        <ul class="mb-0">
+            <li><strong>State Admin Users:</strong> Users assigned to specific states. They need approval to access the system.</li>
+            <li><strong>Veteran Users:</strong> Veterans who registered for portal access. Superadmin can override state admin approval decisions.</li>
+            <li><strong>Approved Status:</strong> Only approved users can login and access their respective dashboards.</li>
+            <li><strong>Pending Status:</strong> Users waiting for approval (state admin or superadmin).</li>
+            <li><strong>Regular Users:</strong> Users without state assignment (for future use).</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+document.getElementById('stateUserSearch').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#stateUsersTable tbody tr');
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
+document.getElementById('veteranUserSearch').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#veteranUsersTable tbody tr');
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
+document.getElementById('regularUserSearch').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#regularUsersTable tbody tr');
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

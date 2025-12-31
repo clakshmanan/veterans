@@ -1,0 +1,180 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block title %}Manage Events - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">
+                        <i class="fas fa-calendar-plus mr-2"></i>Manage Events
+                        {% if user_state %}
+                        <small class="text-light ml-2">({{ user_state.name }})</small>
+                        {% endif %}
+                    </h3>
+                    <a href="{% url 'create_event' %}" class="btn btn-primary">
+                        <i class="fas fa-plus mr-1"></i>Create New Event
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 25%;">Title</th>
+                                    <th style="width: 12%;">Category</th>
+                                    <th style="width: 12%;">State</th>
+                                    <th style="width: 12%;">Start Date</th>
+                                    <th style="width: 10%;">Status</th>
+                                    <th style="width: 10%;">Registrations</th>
+                                    <th style="width: 8%;">Fee</th>
+                                    <th style="width: 11%; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody style="color: #333;">
+                                {% for event in events %}
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <strong style="color: #2c3e50;">{{ event.title }}</strong>
+                                        <br><small class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ event.venue }}</small>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <span class="badge bg-primary">{{ event.category.name }}</span>
+                                    </td>
+                                    <td style="vertical-align: middle; color: #555;">
+                                        {% if event.state %}
+                                        {{ event.state.name }}
+                                        {% else %}
+                                        <span class="text-muted">All States</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="vertical-align: middle; color: #555;">
+                                        <i class="far fa-calendar"></i> {{ event.start_date|date:"M d, Y" }}
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        {% if event.status == 'published' %}
+                                        <span class="badge bg-success">Published</span>
+                                        {% elif event.status == 'draft' %}
+                                        <span class="badge bg-secondary">Draft</span>
+                                        {% elif event.status == 'completed' %}
+                                        <span class="badge bg-info">Completed</span>
+                                        {% elif event.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: center;">
+                                        <span class="badge bg-primary">
+                                            {{ event.get_registration_count }}
+                                            {% if event.max_participants %}
+                                            / {{ event.max_participants }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td style="vertical-align: middle; color: #555; font-weight: 500;">
+                                        {% if event.registration_fee > 0 %}
+                                        ₹{{ event.registration_fee }}
+                                        {% else %}
+                                        <span class="text-success fw-bold">Free</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: center;">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-info" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if user.is_superuser or not event.state or event.state == user_state %}
+                                            <a href="{% url 'edit_event' event.id %}" class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'delete_event' event.id %}" class="btn btn-sm btn-danger" title="Delete" 
+                                               onclick="return confirm('Are you sure you want to delete this event?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            {% else %}
+                                            <span class="btn btn-sm btn-secondary disabled" title="Cannot edit events from other states">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No Events Created</h4>
+                        <p class="text-muted">Create your first event to get started.</p>
+                        <a href="{% url 'create_event' %}" class="btn btn-primary">
+                            <i class="fas fa-plus mr-1"></i>Create Event
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table td {
+    padding: 1rem 0.75rem;
+    font-size: 0.95rem;
+}
+
+.badge {
+    padding: 0.4em 0.8em;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.btn-group .btn {
+    padding: 0.375rem 0.75rem;
+}
+
+.card {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: none;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1.25rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+</style>
+{% endblock %}

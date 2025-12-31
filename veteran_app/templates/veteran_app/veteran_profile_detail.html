@@ -1,0 +1,248 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'veteran_dashboard' %}" class="btn btn-primary me-3">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <h2 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i>Complete Profile
+                    </h2>
+                </div>
+                <div>
+                    <a href="{% url 'veteran_profile_edit' %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <img src="{{ veteran.get_profile_photo_url }}" alt="Profile Photo" 
+                                 class="img-fluid rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;">
+                            <h4>{{ veteran.name }}</h4>
+                            <p class="text-muted">{{ veteran.rank }} | {{ veteran.association_number|default:"Not Assigned" }}</p>
+                            <small class="text-muted">Service No: {{ veteran.service_number }}</small>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <strong>State:</strong> {{ veteran.state }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Group:</strong> {{ veteran.group }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Blood Group:</strong> {{ veteran.blood_group }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Contact:</strong> {{ veteran.contact }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Address:</strong> {{ veteran.address }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Personal & Family Information -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-home me-2"></i>Personal & Family</h5>
+                </div>
+                <div class="card-body">
+                    {% if veteran.spouse_name %}
+                    <p><strong>Spouse:</strong> {{ veteran.spouse_name }}</p>
+                    {% endif %}
+                    {% if veteran.children_count %}
+                    <p><strong>Children:</strong> {{ veteran.children_count }}</p>
+                    {% endif %}
+                    {% if veteran.alternate_email %}
+                    <p><strong>Alternate Email:</strong> {{ veteran.alternate_email }}</p>
+                    {% endif %}
+                    {% if veteran.emergency_contact_name %}
+                    <p><strong>Emergency Contact:</strong> {{ veteran.emergency_contact_name }}
+                    {% if veteran.emergency_contact_phone %}<br><small>{{ veteran.emergency_contact_phone }}</small>{% endif %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Service Information -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Service Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Date of Joining:</strong> {{ veteran.date_of_joining }}</p>
+                    <p><strong>Retired On:</strong> {{ veteran.retired_on }}</p>
+                    {% if veteran.service_number %}
+                    <p><strong>Service Number:</strong> {{ veteran.service_number }}</p>
+                    {% endif %}
+                    {% if veteran.unit_served %}
+                    <p><strong>Unit Served:</strong> {{ veteran.unit_served }}</p>
+                    {% endif %}
+                    {% if veteran.specialization %}
+                    <p><strong>Specialization:</strong> {{ veteran.specialization }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Awards & Decorations -->
+        {% if veteran.decorations %}
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-medal me-2"></i>Awards & Decorations</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ veteran.decorations }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Deployment History -->
+        {% if veteran.deployment_history %}
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-globe me-2"></i>Deployment History</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ veteran.deployment_history }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Medical Information -->
+        {% if veteran.medical_conditions or veteran.disabilities or veteran.insurance_details %}
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-heartbeat me-2"></i>Medical Information</h5>
+                </div>
+                <div class="card-body">
+                    {% if veteran.medical_conditions %}
+                    <p><strong>Medical Conditions:</strong><br>{{ veteran.medical_conditions }}</p>
+                    {% endif %}
+                    {% if veteran.disabilities %}
+                    <p><strong>Disabilities:</strong><br>{{ veteran.disabilities }}</p>
+                    {% endif %}
+                    {% if veteran.insurance_details %}
+                    <p><strong>Insurance:</strong><br>{{ veteran.insurance_details }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Financial Information -->
+        {% if veteran.pension_details or veteran.bank_account or veteran.welfare_schemes %}
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-money-check me-2"></i>Financial & Welfare</h5>
+                </div>
+                <div class="card-body">
+                    {% if veteran.pension_details %}
+                    <p><strong>Pension Details:</strong><br>{{ veteran.pension_details }}</p>
+                    {% endif %}
+                    {% if veteran.bank_account %}
+                    <p><strong>Bank Account:</strong> {{ veteran.bank_account }}
+                    {% if veteran.bank_name %}<br><small>{{ veteran.bank_name }}</small>{% endif %}</p>
+                    {% endif %}
+                    {% if veteran.welfare_schemes %}
+                    <p><strong>Welfare Schemes:</strong><br>{{ veteran.welfare_schemes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Next of Kin -->
+        {% if veteran.next_of_kin %}
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Next of Kin</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ veteran.next_of_kin }}</p>
+                    {% if veteran.next_of_kin_relation %}
+                    <p><strong>Relationship:</strong> {{ veteran.next_of_kin_relation }}</p>
+                    {% endif %}
+                    {% if veteran.next_of_kin_contact %}
+                    <p><strong>Contact:</strong> {{ veteran.next_of_kin_contact }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Service Support -->
+        {% if veteran.nearest_dhq %}
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Service Support</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nearest DHQ:</strong> {{ veteran.nearest_dhq }}</p>
+                    <small class="text-muted">For post-retirement service support and assistance</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Subscription Status -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Subscription Status</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% with status=veteran.get_subscription_status %}
+                    <div class="mb-3">
+                        <span class="badge bg-{{ status.color }} fs-6 px-3 py-2">{{ status.status }}</span>
+                    </div>
+                    {% endwith %}
+                    {% if veteran.subscription_paid_on %}
+                    <p><strong>Last Payment:</strong> {{ veteran.subscription_paid_on }}</p>
+                    {% endif %}
+                    {% if veteran.get_subscription_due_date %}
+                    <p><strong>Due Date:</strong> {{ veteran.get_subscription_due_date }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>
+{% endblock %}

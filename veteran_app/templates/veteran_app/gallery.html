@@ -1,0 +1,635 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fas fa-images me-2"></i>Photo Gallery</h2>
+            <p class="text-muted">Memories and moments from our veteran community</p>
+        </div>
+        <div class="d-flex gap-2">
+            {% if can_upload %}
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <i class="fas fa-upload me-2"></i>Upload Image
+            </button>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="btn btn-primary" style="background-color: #007bff; color: white; border-color: #007bff;">
+                <i class="fas fa-arrow me-2"></i>Go to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    {% if state_stats %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Gallery Statistics by State</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                {% for stat in state_stats %}
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                    <div class="stat-card">
+                        <div class="stat-state">{{ stat.state.code }}</div>
+                        <div class="stat-count">{{ stat.count }} <small>images</small></div>
+                        <div class="stat-size">{{ stat.size }} MB</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-filter me-1"></i>Filter by State</label>
+                    <select name="state" class="form-select" onchange="this.form.submit()">
+                        <option value="">All States</option>
+                        {% for state in states %}
+                        <option value="{{ state.id }}" {% if request.GET.state == state.id|stringformat:"s" %}selected{% endif %}>
+                            {{ state.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    {% if images %}
+    <div class="row g-4">
+        {% for image in images %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="gallery-card">
+                <div class="gallery-image-wrapper">
+                    <img src="{{ image.image.url }}" alt="{{ image.title }}" class="gallery-image" data-bs-toggle="modal" data-bs-target="#imageModal{{ image.id }}">
+                    <div class="gallery-overlay">
+                        <div class="gallery-actions">
+                            <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#imageModal{{ image.id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <a href="{{ image.image.url }}" download class="btn btn-sm btn-success">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            {% if user.is_superuser or image.uploaded_by == user %}
+                            <form method="post" action="{% url 'delete_gallery_image' image.id %}" class="d-inline" onsubmit="return confirm('Delete this image?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-info">
+                    <h6 class="gallery-title">{{ image.title }}</h6>
+                    <p class="gallery-meta">
+                        {% if image.state %}
+                        <span class="badge bg-primary">{{ image.state.name }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">All States</span>
+                        {% endif %}
+                        <small class="text-muted ms-2">{{ image.created_at|date:"M d, Y" }}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Modal -->
+        <div class="modal fade" id="imageModal{{ image.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ image.title }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="{{ image.image.url }}" alt="{{ image.title }}" class="img-fluid rounded">
+                        {% if image.description %}
+                        <p class="mt-3 text-muted">{{ image.description }}</p>
+                        {% endif %}
+                        <div class="mt-3">
+                            {% if image.state %}
+                            <span class="badge bg-primary me-2"><i class="fas fa-map-marker-alt me-1"></i>{{ image.state.name }}</span>
+                            {% endif %}
+                            <span class="badge bg-secondary"><i class="fas fa-calendar me-1"></i>{{ image.created_at|date:"F d, Y" }}</span>
+                            <span class="badge bg-info"><i class="fas fa-user me-1"></i>{{ image.uploaded_by.username }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-images fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">No images found</h4>
+        <p class="text-muted">{% if can_upload %}Upload the first image to get started!{% else %}Check back later for updates.{% endif %}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Upload Modal -->
+{% if can_upload %}
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="{% url 'upload_gallery_image' %}" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Upload Images</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Drag and Drop Zone -->
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-zone-content">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                            <h5>Drag & Drop Images Here</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                            <input type="file" id="fileInput" name="images" class="d-none" accept="image/*" multiple>
+                        </div>
+                    </div>
+                    
+                    <!-- Selected Files Preview -->
+                    <div id="filePreview" class="mt-3" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Selected Images (<span id="fileCount">0</span>)</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleEditMode()">
+                                <i class="fas fa-edit me-1"></i><span id="editModeText">Edit Details</span>
+                            </button>
+                        </div>
+                        <div id="previewContainer" class="preview-list"></div>
+                    </div>
+                    
+                    <!-- Common Fields -->
+                    <div class="mt-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> Click "Edit Details" to add individual titles and descriptions to each image.
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Title Prefix (Optional)</label>
+                            <input type="text" name="title_prefix" id="titlePrefix" class="form-control" placeholder="e.g., Annual Meet 2024">
+                            <small class="text-muted">Applied to images without individual titles</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Common Description (Optional)</label>
+                            <textarea name="description" id="description" class="form-control" rows="2" placeholder="Description for all images"></textarea>
+                            <small class="text-muted">Applied to images without individual descriptions</small>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div class="mb-3">
+                            <label class="form-label">State (Optional)</label>
+                            <select name="state" id="state" class="form-select">
+                                <option value="">All States</option>
+                                {% for state in states %}
+                                <option value="{{ state.id }}">{{ state.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>
+                        <i class="fas fa-upload me-2"></i>Upload <span id="uploadCount"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.gallery-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.gallery-image-wrapper {
+    position: relative;
+    padding-top: 75%;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.gallery-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-image {
+    transform: scale(1.05);
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-card:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.gallery-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.gallery-info {
+    padding: 15px;
+}
+
+.gallery-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1e40af;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-meta {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.modal-body img {
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+.drop-zone {
+    border: 3px dashed #1e40af;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+    background: #e3f2fd;
+    border-color: #0d47a1;
+}
+
+.drop-zone-content {
+    pointer-events: none;
+}
+
+.preview-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.preview-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.preview-item:hover {
+    border-color: #1e40af;
+    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.1);
+}
+
+.preview-thumbnail {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #dee2e6;
+}
+
+.preview-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.preview-filename {
+    font-weight: 600;
+    color: #1e40af;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.preview-fields {
+    display: none;
+}
+
+.preview-fields.active {
+    display: block;
+}
+
+.preview-fields input,
+.preview-fields textarea {
+    font-size: 0.85rem;
+}
+
+.preview-actions {
+    display: flex;
+    align-items: center;
+}
+
+.remove-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+    background: #b91c1c;
+    transform: scale(1.05);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.stat-state {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 4px;
+}
+
+.stat-count {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0ea5e9;
+    margin-bottom: 2px;
+}
+
+.stat-count small {
+    font-size: 0.65rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.stat-size {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+}
+</style>
+
+<script>
+let selectedFiles = [];
+let editMode = false;
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const filePreview = document.getElementById('filePreview');
+const previewContainer = document.getElementById('previewContainer');
+const uploadBtn = document.getElementById('uploadBtn');
+const fileCount = document.getElementById('fileCount');
+const uploadCount = document.getElementById('uploadCount');
+
+// Drag and drop events
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('drag-over');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    handleFiles(files);
+});
+
+dropZone.addEventListener('click', () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    handleFiles(files);
+});
+
+function handleFiles(files) {
+    files.forEach(file => {
+        selectedFiles.push({
+            file: file,
+            title: file.name,
+            description: ''
+        });
+    });
+    updatePreview();
+}
+
+function toggleEditMode() {
+    editMode = !editMode;
+    document.getElementById('editModeText').textContent = editMode ? 'Hide Details' : 'Edit Details';
+    document.querySelectorAll('.preview-fields').forEach(el => {
+        el.classList.toggle('active', editMode);
+    });
+}
+
+function updatePreview() {
+    previewContainer.innerHTML = '';
+    
+    if (selectedFiles.length === 0) {
+        filePreview.style.display = 'none';
+        uploadBtn.disabled = true;
+        uploadCount.textContent = '';
+        return;
+    }
+    
+    filePreview.style.display = 'block';
+    uploadBtn.disabled = false;
+    fileCount.textContent = selectedFiles.length;
+    uploadCount.textContent = `(${selectedFiles.length} image${selectedFiles.length > 1 ? 's' : ''})`;
+    
+    selectedFiles.forEach((fileData, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            div.innerHTML = `
+                <div class="preview-thumbnail">
+                    <img src="${e.target.result}" alt="Preview">
+                </div>
+                <div class="preview-content">
+                    <div class="preview-filename">
+                        <i class="fas fa-image me-1"></i>${fileData.file.name}
+                    </div>
+                    <div class="preview-fields ${editMode ? 'active' : ''}">
+                        <input type="text" class="form-control form-control-sm mb-2" 
+                               placeholder="Image title" 
+                               value="${fileData.title}"
+                               onchange="updateFileData(${index}, 'title', this.value)">
+                        <textarea class="form-control form-control-sm" 
+                                  placeholder="Image description (optional)" 
+                                  rows="2"
+                                  onchange="updateFileData(${index}, 'description', this.value)">${fileData.description}</textarea>
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button type="button" class="remove-btn" onclick="removeFile(${index})">
+                        <i class="fas fa-trash me-1"></i>Remove
+                    </button>
+                </div>
+            `;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(fileData.file);
+    });
+}
+
+function updateFileData(index, field, value) {
+    selectedFiles[index][field] = value;
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    updatePreview();
+}
+
+// Handle form submission
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (selectedFiles.length === 0) {
+        alert('Please select at least one image');
+        return;
+    }
+    
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+    
+    const titlePrefix = document.getElementById('titlePrefix').value;
+    const commonDescription = document.getElementById('description').value;
+    const state = document.getElementById('state') ? document.getElementById('state').value : '';
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (let i = 0; i < selectedFiles.length; i++) {
+        const fileData = selectedFiles[i];
+        const formData = new FormData();
+        formData.append('image', fileData.file);
+        
+        // Use individual title if set, otherwise use prefix + filename
+        const finalTitle = fileData.title || (titlePrefix ? `${titlePrefix} - ${fileData.file.name}` : fileData.file.name);
+        formData.append('title', finalTitle);
+        
+        // Use individual description if set, otherwise use common description
+        const finalDescription = fileData.description || commonDescription;
+        formData.append('description', finalDescription);
+        
+        if (state) formData.append('state', state);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        try {
+            const response = await fetch('{% url "upload_gallery_image" %}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                successCount++;
+            } else {
+                errorCount++;
+            }
+        } catch (error) {
+            errorCount++;
+        }
+        
+        uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>Uploading ${i + 1}/${selectedFiles.length}...`;
+    }
+    
+    if (successCount > 0) {
+        alert(`Successfully uploaded ${successCount} image(s)${errorCount > 0 ? `, ${errorCount} failed` : ''}`);
+        window.location.reload();
+    } else {
+        alert('Failed to upload images. Please try again.');
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Upload';
+    }
+});
+
+// Reset on modal close
+document.getElementById('uploadModal').addEventListener('hidden.bs.modal', () => {
+    selectedFiles = [];
+    editMode = false;
+    document.getElementById('editModeText').textContent = 'Edit Details';
+    updatePreview();
+    document.getElementById('uploadForm').reset();
+});
+</script>
+{% endblock %}

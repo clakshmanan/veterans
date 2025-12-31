@@ -1,0 +1,433 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    {% if user.veteran_profile %}
+                        <a href="{% url 'veteran_dashboard' %}" class="btn btn-primary me-3">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    {% elif user.state_profile %}
+                        <a href="{% url 'state_dashboard' user.state_profile.state.id %}" class="btn btn-primary me-3">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    {% elif user.is_superuser %}
+                        <a href="{% url 'index' %}" class="btn btn-primary me-3">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </a>
+                    {% endif %}
+                    <div>
+                        <h2><i class="fas fa-folder-open"></i> Documents & Media</h2>
+                        <p class="text-muted mb-0">Access important documents, circulars, and notifications</p>
+                    </div>
+                </div>
+                {% if user.is_superuser %}
+                <div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <i class="fas fa-upload"></i> Upload Document
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100 metric-card">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-subtitle mb-2">Total Documents</h6>
+                        <h3 class="card-title mb-0">{{ documents.count }}</h3>
+                        <small class="opacity-75">Available Files</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-file-alt fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100 metric-card">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-subtitle mb-2">Important</h6>
+                        <h3 class="card-title mb-0">{{ important_count }}</h3>
+                        <small class="opacity-75">Priority Documents</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-star fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100 metric-card">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-subtitle mb-2">This Month</h6>
+                        <h3 class="card-title mb-0">{{ this_month_count }}</h3>
+                        <small class="opacity-75">Recent Uploads</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-calendar-alt fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100 metric-card">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-subtitle mb-2">Active Notifications</h6>
+                        <h3 class="card-title mb-0">{{ notifications.count }}</h3>
+                        <small class="opacity-75">Current Alerts</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-bell fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Notifications -->
+    {% if notifications %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5><i class="fas fa-bell"></i> Active Notifications</h5>
+            {% for notification in notifications %}
+            <div class="alert alert-{{ notification.notification_type }} alert-dismissible fade show" role="alert">
+                <strong>{{ notification.title }}</strong>
+                <p class="mb-0">{{ notification.message }}</p>
+                <small class="text-muted">Posted: {{ notification.created_at|date:"M d, Y" }}</small>
+                {% if notification.expires_at %}
+                <small class="text-muted"> | Expires: {{ notification.expires_at|date:"M d, Y" }}</small>
+                {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filter Section -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <select id="typeFilter" class="form-select">
+                <option value="">All Types</option>
+                <option value="circular">Circular</option>
+                <option value="notification">Notification</option>
+                <option value="form">Form</option>
+                <option value="guideline">Guideline</option>
+                <option value="policy">Policy Document</option>
+                <option value="announcement">Announcement</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="importantFilter" class="form-select">
+                <option value="">All Documents</option>
+                <option value="important">Important Only</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <input type="text" id="searchBox" class="form-control" placeholder="Search documents...">
+        </div>
+    </div>
+
+    <!-- Documents Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="documentsTable">
+                    <thead>
+                        <tr>
+                            <th width="5%"><i class="fas fa-star"></i></th>
+                            <th width="40%">Title</th>
+                            <th width="15%">Type</th>
+                            <th width="10%">Size</th>
+                            <th width="15%">Date</th>
+                            <th width="15%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr data-type="{{ doc.document_type }}" data-important="{{ doc.is_important|yesno:'true,false' }}">
+                            <td>
+                                {% if doc.is_important %}
+                                    <i class="fas fa-star text-warning" title="Important"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ doc.title }}</strong>
+                                {% if doc.description %}
+                                <br><small class="text-muted">{{ doc.description|truncatewords:15 }}</small>
+                                {% endif %}
+                                {% if doc.state %}
+                                <br><span class="badge bg-info">{{ doc.state.name }}</span>
+                                {% else %}
+                                <br><span class="badge bg-secondary">All States</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">{{ doc.get_document_type_display }}</span>
+                            </td>
+                            <td>
+                                <small>{{ doc.get_file_size }}</small>
+                            </td>
+                            <td>
+                                <small>{{ doc.created_at|date:"M d, Y" }}</small>
+                                {% if doc.uploaded_by %}
+                                <br><small class="text-muted">by {{ doc.uploaded_by.username }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'view_document' doc.id %}" class="btn btn-sm btn-outline-primary" title="View" target="_blank">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'download_document_file' doc.id %}" class="btn btn-sm btn-outline-success" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                {% if user.is_superuser %}
+                                <a href="{% url 'delete_document' doc.id %}" class="btn btn-sm btn-outline-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this document?')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="py-4">
+                                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No documents available yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modal (Superuser Only) -->
+{% if user.is_superuser %}
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-upload"></i> Upload Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'upload_document' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Document Type *</label>
+                            <select name="document_type" class="form-select" required>
+                                <option value="circular">Circular</option>
+                                <option value="notification" selected>Notification</option>
+                                <option value="form">Form</option>
+                                <option value="guideline">Guideline</option>
+                                <option value="policy">Policy Document</option>
+                                <option value="announcement">Announcement</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">State</label>
+                            <select name="state" class="form-select">
+                                <option value="">All States</option>
+                                {% for state in all_states %}
+                                <option value="{{ state.id }}">{{ state.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">File *</label>
+                        <input type="file" name="file" class="form-control" required 
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx">
+                        <small class="text-muted">Supported: PDF, DOC, DOCX, JPG, PNG, XLS, XLSX</small>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="is_important" class="form-check-input" id="isImportant">
+                        <label class="form-check-label" for="isImportant">
+                            Mark as Important/Urgent
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="is_public" class="form-check-input" id="isPublic" checked>
+                        <label class="form-check-label" for="isPublic">
+                            Visible to all users
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Filter and Search Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeFilter = document.getElementById('typeFilter');
+        const importantFilter = document.getElementById('importantFilter');
+        const searchBox = document.getElementById('searchBox');
+        const table = document.getElementById('documentsTable');
+        const rows = table.querySelectorAll('tbody tr');
+        
+        function filterTable() {
+            const typeValue = typeFilter.value.toLowerCase();
+            const importantValue = importantFilter.value;
+            const searchValue = searchBox.value.toLowerCase();
+            
+            rows.forEach(row => {
+                if (row.cells.length === 1) return; // Skip empty row
+                
+                const rowType = row.dataset.type;
+                const rowImportant = row.dataset.important;
+                const rowText = row.textContent.toLowerCase();
+                
+                let show = true;
+                
+                // Type filter
+                if (typeValue && rowType !== typeValue) {
+                    show = false;
+                }
+                
+                // Important filter
+                if (importantValue === 'important' && rowImportant !== 'true') {
+                    show = false;
+                }
+                
+                // Search filter
+                if (searchValue && !rowText.includes(searchValue)) {
+                    show = false;
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+        
+        typeFilter.addEventListener('change', filterTable);
+        importantFilter.addEventListener('change', filterTable);
+        searchBox.addEventListener('keyup', filterTable);
+    });
+</script>
+
+<style>
+.metric-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.metric-card .card-body {
+    padding: 1.5rem;
+}
+
+.metric-card .card-subtitle {
+    font-weight: 600;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.metric-card .card-title {
+    font-weight: 700;
+    font-size: 2.2rem;
+}
+
+.metric-card small {
+    font-size: 0.8rem;
+}
+
+.metric-card i {
+    font-size: 2.5rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .metric-card .card-body {
+        padding: 1.2rem;
+    }
+    
+    .metric-card .card-title {
+        font-size: 1.8rem;
+    }
+    
+    .metric-card i {
+        font-size: 2rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .metric-card .card-body {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .metric-card .ms-3 {
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+    }
+    
+    .metric-card .card-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation for cards on load */
+.metric-card {
+    animation: slideInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}

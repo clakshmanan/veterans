@@ -1,0 +1,97 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block title %}Register for {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4><i class="fas fa-user-plus mr-2"></i>Event Registration</h4>
+                </div>
+                <div class="card-body">
+                    <div class="event-summary mb-4 p-3 bg-light rounded">
+                        <h5>{{ event.title }}</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Date:</strong> {{ event.start_date|date:"F d, Y g:i A" }}</p>
+                                <p><strong>Venue:</strong> {{ event.venue }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Category:</strong> {{ event.category.name }}</p>
+                                <p><strong>Fee:</strong> 
+                                    {% if event.registration_fee > 0 %}
+                                    <span class="text-success">₹{{ event.registration_fee }}</span>
+                                    {% else %}
+                                    <span class="text-success">Free</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="participants_count">Number of Participants</label>
+                            <select class="form-control" id="participants_count" name="participants_count" required>
+                                <option value="1">1 Person</option>
+                                <option value="2">2 People</option>
+                                <option value="3">3 People</option>
+                                <option value="4">4 People</option>
+                                <option value="5">5 People</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="special_requirements">Special Requirements</label>
+                            <textarea class="form-control" id="special_requirements" name="special_requirements" 
+                                      rows="3" placeholder="Any dietary restrictions, accessibility needs, or other requirements..."></textarea>
+                        </div>
+                        
+                        {% if event.registration_fee > 0 %}
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle mr-2"></i>Payment Information</h6>
+                            <p class="mb-0">Registration fee: <strong>₹{{ event.registration_fee }}</strong> per person</p>
+                            <p class="mb-0">Total amount will be calculated based on number of participants.</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check mr-2"></i>
+                                {% if event.registration_fee > 0 %}
+                                Proceed to Payment
+                                {% else %}
+                                Complete Registration
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'event_detail' event.id %}" class="btn btn-secondary btn-lg ml-2">
+                                <i class="fas fa-arrow-left mr-2"></i>Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update total amount display
+document.getElementById('participants_count').addEventListener('change', function() {
+    const count = parseInt(this.value);
+    const fee = {{ event.registration_fee }};
+    const total = count * fee;
+    
+    // Update any total display elements if they exist
+    const totalElements = document.querySelectorAll('.total-amount');
+    totalElements.forEach(element => {
+        element.textContent = '₹' + total;
+    });
+});
+</script>
+{% endblock %}

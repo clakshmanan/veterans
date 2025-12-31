@@ -1,0 +1,247 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+        {% if user.is_superuser %}
+            <a href="{% url 'services' %}" class="btn btn-primary me-3">
+                <i class="fas fa-arrow-left"></i> Back to States
+            </a>
+        {% else %}
+            <a href="{% url 'state_dashboard' state.id %}" class="btn btn-primary me-3">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        {% endif %}
+        <h2 class="mb-0">{{ state.name }} Veterans</h2>
+    </div>
+    <div>
+        <a href="{% url 'download_members' state.id %}" class="btn btn-outline-success me-2">
+            <i class="fas fa-download me-1"></i>Download
+        </a>
+        <a href="{% url 'add_member' state.id %}" class="btn btn-primary me-2">
+            <i class="fas fa-plus me-1"></i>Add Veteran
+        </a>
+        <a href="{% url 'manage_veteran_users' state.id %}" class="btn btn-outline-info">
+            <i class="fas fa-users me-1"></i>Manage Users
+        </a>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4 ms-auto">
+        <label for="memberSearch" class="form-label">Search</label>
+        <input type="text" id="veteranSearch" class="form-control" placeholder="Type to filter veterans...">
+    </div>
+    <div class="col-12 text-muted small mt-1">
+        Type any text to filter across all visible columns.
+    </div>
+    
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="membersTable">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;"><i class="fas fa-hashtag"></i> ID</th>
+                        <th style="width: 15%;"><i class="fas fa-user"></i> Name</th>
+                        <th style="width: 10%;"><i class="fas fa-medal"></i> Rank</th>
+                        <th style="width: 10%;"><i class="fas fa-code-branch"></i> Branch</th>
+                        <th style="width: 12%;"><i class="fas fa-id-badge"></i> Association No.</th>
+                        <th style="width: 12%;"><i class="fas fa-id-card"></i> Service No.</th>
+                        <th style="width: 10%;"><i class="fas fa-phone"></i> Contact</th>
+                        <th style="width: 10%;"><i class="fas fa-credit-card"></i> Subscription</th>
+                        <th style="width: 8%;"><i class="fas fa-check-circle"></i> Status</th>
+                        <th style="width: 13%; text-align: center;"><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% csrf_token %}
+                    {% for member in members %}
+                    <tr>
+                        <td>{{ member.association_id }}</td>
+                        <td>{{ member.name }}</td>
+                        <td>{{ member.rank }}</td>
+                        <td>{{ member.branch.name }}</td>
+                        <td><span class="badge bg-info">{{ member.association_number|default:"Not Assigned" }}</span></td>
+                        <td>{{ member.service_number }}</td>
+                        <td>{{ member.contact }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ member.get_profile_photo_url }}" alt="Profile" 
+                                     class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                {% with status=member.get_subscription_status %}
+                                    <span class="badge bg-{{ status.color }}">{{ status.status }}</span>
+                                {% endwith %}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge {% if member.approved %}bg-success{% else %}bg-warning{% endif %}" id="status-{{ member.association_id }}">
+                                {% if member.approved %}Approved{% else %}Pending{% endif %}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'edit_member' member.association_id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if member.document %}
+                                    <a href="{% url 'download_document' member.association_id %}" class="btn btn-sm btn-outline-info" title="Download Attachment">
+                                        <i class="fas fa-paperclip"></i>
+                                    </a>
+                                {% endif %}
+                                {% if user.is_superuser %}
+                                    <span id="actions-{{ member.association_id }}">
+                                        {% if not member.approved %}
+                                            <button class="btn btn-sm btn-outline-success approve-btn" data-member-id="{{ member.association_id }}">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-outline-danger disapprove-btn" data-member-id="{{ member.association_id }}">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                                <a href="{% url 'delete_member' member.association_id %}" class="btn btn-sm btn-outline-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this veteran?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center">No veterans found for this state.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const input = document.getElementById('veteranSearch');
+        const table = document.getElementById('membersTable');
+        if (!input || !table) return;
+        input.addEventListener('keyup', function () {
+            const filter = this.value.trim().toLowerCase();
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    })();
+
+    // AJAX for approve/disapprove functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle approve buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.approve-btn')) {
+                e.preventDefault();
+                const btn = e.target.closest('.approve-btn');
+                const memberId = btn.dataset.memberId;
+                
+                fetch(`/member/${memberId}/approve/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update status badge
+                        const statusBadge = document.getElementById(`status-${memberId}`);
+                        statusBadge.className = 'badge bg-success';
+                        statusBadge.textContent = 'Approved';
+                        
+                        // Update action button
+                        const actionsDiv = document.getElementById(`actions-${memberId}`);
+                        actionsDiv.innerHTML = `
+                            <button class="btn btn-sm btn-outline-danger disapprove-btn" data-member-id="${memberId}">
+                                <i class="fas fa-times"></i> Disapprove
+                            </button>
+                        `;
+                        
+                        // Show success message
+                        showMessage(data.message, 'success');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error updating status', 'error');
+                });
+            }
+            
+            // Handle disapprove buttons
+            if (e.target.closest('.disapprove-btn')) {
+                e.preventDefault();
+                const btn = e.target.closest('.disapprove-btn');
+                const memberId = btn.dataset.memberId;
+                
+                if (confirm('Are you sure you want to disapprove this veteran?')) {
+                    fetch(`/member/${memberId}/disapprove/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update status badge
+                            const statusBadge = document.getElementById(`status-${memberId}`);
+                            statusBadge.className = 'badge bg-warning';
+                            statusBadge.textContent = 'Pending';
+                            
+                            // Update action button
+                            const actionsDiv = document.getElementById(`actions-${memberId}`);
+                            actionsDiv.innerHTML = `
+                                <button class="btn btn-sm btn-outline-success approve-btn" data-member-id="${memberId}">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                            `;
+                            
+                            // Show success message
+                            showMessage(data.message, 'warning');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Error updating status', 'error');
+                    });
+                }
+            }
+        });
+        
+        // Function to show messages
+        function showMessage(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : 'alert-danger';
+            const alertHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            // Insert at top of page
+            const container = document.querySelector('.container-fluid') || document.body;
+            container.insertAdjacentHTML('afterbegin', alertHtml);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) alert.remove();
+            }, 3000);
+        }
+    });
+</script>
+{% endblock %}

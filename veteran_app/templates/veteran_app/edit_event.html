@@ -1,0 +1,167 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block title %}Edit Event - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit mr-2"></i>Edit Event
+                        {% if user_state %}
+                        <small class="text-light ml-2">({{ user_state.name }})</small>
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="title">Event Title *</label>
+                                    <input type="text" class="form-control" id="title" name="title" value="{{ event.title }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="category">Category *</label>
+                                    <input type="text" class="form-control" id="category" name="category" 
+                                           value="{{ event.category.name }}" placeholder="e.g., Conference, Workshop, Reunion" required>
+                                    <small class="form-text text-muted">Enter event category</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required>{{ event.description }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="start_date">Start Date & Time *</label>
+                                    <input type="datetime-local" class="form-control" id="start_date" name="start_date" 
+                                           value="{{ event.start_date|date:'Y-m-d\TH:i' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="end_date">End Date & Time *</label>
+                                    <input type="datetime-local" class="form-control" id="end_date" name="end_date" 
+                                           value="{{ event.end_date|date:'Y-m-d\TH:i' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="venue">Venue *</label>
+                                    <input type="text" class="form-control" id="venue" name="venue" value="{{ event.venue }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    {% if user.is_superuser %}
+                                    <select class="form-control" id="state" name="state">
+                                        <option value="" {% if not event.state %}selected{% endif %}>All States</option>
+                                        {% for state in states %}
+                                        <option value="{{ state.id }}" {% if event.state and event.state.id == state.id %}selected{% endif %}>{{ state.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="form-text text-muted">Select specific state or leave as "All States"</small>
+                                    {% else %}
+                                    <input type="text" class="form-control" value="{% if event.state %}{{ event.state.name }}{% else %}All States{% endif %}" readonly>
+                                    <small class="form-text text-muted">State cannot be changed by state admins</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address *</label>
+                            <textarea class="form-control" id="address" name="address" rows="2" required>{{ event.address }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contact_person">Contact Person *</label>
+                                    <input type="text" class="form-control" id="contact_person" name="contact_person" value="{{ event.contact_person }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contact_phone">Contact Phone *</label>
+                                    <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ event.contact_phone }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="registration_fee">Registration Fee (₹)</label>
+                                    <input type="number" class="form-control" id="registration_fee" name="registration_fee" 
+                                           min="0" step="0.01" value="{{ event.registration_fee }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="max_participants">Max Participants</label>
+                                    <input type="number" class="form-control" id="max_participants" name="max_participants" 
+                                           min="1" value="{{ event.max_participants|default:'' }}">
+                                    <small class="form-text text-muted">Leave empty for unlimited</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="registration_deadline">Registration Deadline</label>
+                                    <input type="datetime-local" class="form-control" id="registration_deadline" name="registration_deadline" 
+                                           value="{% if event.registration_deadline %}{{ event.registration_deadline|date:'Y-m-d\TH:i' }}{% endif %}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="banner_image">Banner Image</label>
+                            <input type="file" class="form-control-file" id="banner_image" name="banner_image" accept="image/*">
+                            {% if event.banner_image %}
+                            <div class="mt-2">
+                                <img src="{{ event.banner_image.url }}" alt="Current banner" style="max-width: 200px; border-radius: 5px;">
+                                <small class="d-block text-muted">Current banner (leave empty to keep)</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save mr-2"></i>Update Event
+                            </button>
+                            <a href="{% url 'manage_events' %}" class="btn btn-primary btn-lg ml-2">
+                                <i class="fas fa-times mr-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update end date minimum when start date changes
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('start_date').addEventListener('change', function() {
+        document.getElementById('end_date').min = this.value;
+    });
+});
+</script>
+{% endblock %}

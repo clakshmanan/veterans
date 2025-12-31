@@ -1,0 +1,1256 @@
+{% if form.non_field_errors %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ form.non_field_errors }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="needs-validation veteran-member-form" novalidate>
+    {% csrf_token %}
+
+    <!-- Personal Information Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-primary mb-3">
+                    <i class="fas fa-user-circle me-2"></i>Personal Information
+                </h4>
+                <hr class="border-primary">
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-4">
+            <label for="{{ form.profile_photo.id_for_label }}" class="form-label text-muted fw-semibold">
+                <i class="fas fa-camera me-2"></i>{{ form.profile_photo.label }}
+            </label>
+            {{ form.profile_photo }}
+            {% if form.profile_photo.help_text %}
+            <div class="form-text text-muted mt-2">
+                <i class="fas fa-info-circle me-1"></i>{{ form.profile_photo.help_text }}
+            </div>
+            {% endif %}
+            {% if form.profile_photo.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.profile_photo.errors|striptags }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.name }}
+                <label for="{{ form.name.id_for_label }}" class="text-muted">
+                    <i class="fas fa-user me-1"></i>{{ form.name.label }}
+                </label>
+                {% if form.name.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.name.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.date_of_birth }}
+                <label for="{{ form.date_of_birth.id_for_label }}" class="text-muted">
+                    <i class="fas fa-calendar-alt me-1"></i>{{ form.date_of_birth.label }}
+                </label>
+                {% if form.date_of_birth.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.date_of_birth.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.contact }}
+                <label for="{{ form.contact.id_for_label }}" class="text-muted">
+                    <i class="fas fa-phone me-1"></i>{{ form.contact.label }}
+                </label>
+                {% if form.contact.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.contact.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.alternate_email }}
+                <label for="{{ form.alternate_email.id_for_label }}" class="text-muted">
+                    <i class="fas fa-envelope me-1"></i>{{ form.alternate_email.label }}
+                </label>
+                {% if form.alternate_email.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.alternate_email.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.address }}
+                <label for="{{ form.address.id_for_label }}" class="text-muted">
+                    <i class="fas fa-map-marker-alt me-1"></i>{{ form.address.label }}
+                </label>
+                {% if form.address.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.address.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.living_city }}
+                <label for="{{ form.living_city.id_for_label }}" class="text-muted">
+                    <i class="fas fa-city me-1"></i>{{ form.living_city.label }}
+                </label>
+                {% if form.living_city.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.living_city.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.zip_code }}
+                <label for="{{ form.zip_code.id_for_label }}" class="text-muted">
+                    <i class="fas fa-mail-bulk me-1"></i>{{ form.zip_code.label }}
+                </label>
+                {% if form.zip_code.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.zip_code.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.educational_qualification }}
+                <label for="{{ form.educational_qualification.id_for_label }}" class="text-muted">
+                    <i class="fas fa-graduation-cap me-1"></i>{{ form.educational_qualification.label }}
+                </label>
+                {% if form.educational_qualification.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.educational_qualification.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.enrolled_date }}
+                <label for="{{ form.enrolled_date.id_for_label }}" class="text-muted">
+                    <i class="fas fa-calendar-plus me-1"></i>{{ form.enrolled_date.label }}
+                </label>
+                {% if form.enrolled_date.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.enrolled_date.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contact Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-danger mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Emergency Contact
+                </h4>
+                <hr class="border-danger">
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.emergency_contact_name }}
+                <label for="{{ form.emergency_contact_name.id_for_label }}" class="text-muted">
+                    <i class="fas fa-user-shield me-1"></i>{{ form.emergency_contact_name.label }}
+                </label>
+                {% if form.emergency_contact_name.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.emergency_contact_name.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.emergency_contact_phone }}
+                <label for="{{ form.emergency_contact_phone.id_for_label }}" class="text-muted">
+                    <i class="fas fa-phone-alt me-1"></i>{{ form.emergency_contact_phone.label }}
+                </label>
+                {% if form.emergency_contact_phone.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.emergency_contact_phone.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.nearest_veteran_contact }}
+                <label for="{{ form.nearest_veteran_contact.id_for_label }}" class="text-muted">
+                    <i class="fas fa-users me-1"></i>{{ form.nearest_veteran_contact.label }}
+                </label>
+                {% if form.nearest_veteran_contact.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.nearest_veteran_contact.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Military Information Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-success mb-3">
+                    <i class="fas fa-shield-alt me-2"></i>Military Information
+                </h4>
+                <hr class="border-success">
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                <input type="text" class="form-control" value="{{ member.association_number|default:'Auto-Generated' }}" readonly style="background-color: #f8f9fa; cursor: not-allowed;">
+                <label class="text-muted">
+                    <i class="fas fa-id-badge me-1"></i>Association Number
+                </label>
+                <div class="form-text text-muted mt-2">
+                    <i class="fas fa-info-circle me-1"></i>Unique lifetime association identity number (auto-generated, permanent)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.service_number }}
+                <label for="{{ form.service_number.id_for_label }}" class="text-muted">
+                    <i class="fas fa-id-card me-1"></i>{{ form.service_number.label }}
+                </label>
+                {% if form.service_number.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.service_number.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.rank }}
+                <label for="{{ form.rank.id_for_label }}" class="text-muted">
+                    <i class="fas fa-star me-1"></i>{{ form.rank.label }}
+                </label>
+                {% if form.rank.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.rank.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.branch }}
+                <label for="{{ form.branch.id_for_label }}" class="text-muted">
+                    <i class="fas fa-code-branch me-1"></i>{{ form.branch.label }}
+                </label>
+                {% if form.branch.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.branch.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.unit_served }}
+                <label for="{{ form.unit_served.id_for_label }}" class="text-muted">
+                    <i class="fas fa-ship me-1"></i>{{ form.unit_served.label }}
+                </label>
+                {% if form.unit_served.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.unit_served.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.specialization }}
+                <label for="{{ form.specialization.id_for_label }}" class="text-muted">
+                    <i class="fas fa-cogs me-1"></i>{{ form.specialization.label }}
+                </label>
+                {% if form.specialization.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.specialization.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.date_of_joining }}
+                <label for="{{ form.date_of_joining.id_for_label }}" class="text-muted">
+                    <i class="fas fa-calendar-plus me-1"></i>{{ form.date_of_joining.label }}
+                </label>
+                {% if form.date_of_joining.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.date_of_joining.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.retired_on }}
+                <label for="{{ form.retired_on.id_for_label }}" class="text-muted">
+                    <i class="fas fa-calendar-minus me-1"></i>{{ form.retired_on.label }}
+                </label>
+                {% if form.retired_on.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.retired_on.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.nearest_dhq_text }}
+                <label for="{{ form.nearest_dhq_text.id_for_label }}" class="text-muted">
+                    <i class="fas fa-building me-1"></i>{{ form.nearest_dhq_text.label }}
+                </label>
+                {% if form.nearest_dhq_text.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.nearest_dhq_text.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.decorations }}
+                <label for="{{ form.decorations.id_for_label }}" class="text-muted">
+                    <i class="fas fa-medal me-1"></i>{{ form.decorations.label }}
+                </label>
+                {% if form.decorations.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.decorations.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.deployment_history }}
+                <label for="{{ form.deployment_history.id_for_label }}" class="text-muted">
+                    <i class="fas fa-globe me-1"></i>{{ form.deployment_history.label }}
+                </label>
+                {% if form.deployment_history.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.deployment_history.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Association Information Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-info mb-3">
+                    <i class="fas fa-handshake me-2"></i>Association Information
+                </h4>
+                <hr class="border-info">
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.association_date }}
+                <label for="{{ form.association_date.id_for_label }}" class="text-muted">
+                    <i class="fas fa-calendar-day me-1"></i>{{ form.association_date.label }}
+                </label>
+                {% if form.association_date.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.association_date.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.subscription_ref_no }}
+                <label for="{{ form.subscription_ref_no.id_for_label }}" class="text-muted">
+                    <i class="fas fa-receipt me-1"></i>{{ form.subscription_ref_no.label }}
+                </label>
+                {% if form.subscription_ref_no.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.subscription_ref_no.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.subscription_paid_on }}
+                <label for="{{ form.subscription_paid_on.id_for_label }}" class="text-muted">
+                    <i class="fas fa-credit-card me-1"></i>{{ form.subscription_paid_on.label }}
+                </label>
+                {% if form.subscription_paid_on.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.subscription_paid_on.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.subscription_due_date }}
+                <label for="{{ form.subscription_due_date.id_for_label }}" class="text-muted">
+                    <i class="fas fa-hourglass-half me-1"></i>Subscription Due Date
+                </label>
+                {% if form.subscription_due_date.help_text %}
+                <div class="form-text text-muted mt-1">
+                    <i class="fas fa-info-circle me-1"></i>{{ form.subscription_due_date.help_text }}
+                </div>
+                {% endif %}
+                {% if form.subscription_due_date.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.subscription_due_date.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-check form-switch form-check-lg">
+                {{ form.membership }}
+                <label class="form-check-label text-muted" for="{{ form.membership.id_for_label }}">
+                    <i class="fas fa-check-circle me-1"></i>{{ form.membership.label }}
+                </label>
+                {% if form.membership.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.membership.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-check form-switch form-check-lg">
+                {{ form.searching_for_job }}
+                <label class="form-check-label text-muted" for="{{ form.searching_for_job.id_for_label }}">
+                    <i class="fas fa-briefcase me-1"></i>{{ form.searching_for_job.label }}
+                </label>
+                {% if form.searching_for_job.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.searching_for_job.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <label for="{{ form.document.id_for_label }}" class="form-label text-muted fw-semibold">
+                <i class="fas fa-paperclip me-2"></i>{{ form.document.label }}
+            </label>
+            {{ form.document }}
+            {% if form.document.help_text %}
+            <div class="form-text text-muted mt-2">
+                <i class="fas fa-info-circle me-1"></i>{{ form.document.help_text }}
+            </div>
+            {% endif %}
+            {% if form.document.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.document.errors|striptags }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Medical Information Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-warning mb-3">
+                    <i class="fas fa-heartbeat me-2"></i>Medical Information
+                </h4>
+                <hr class="border-warning">
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.blood_group }}
+                <label for="{{ form.blood_group.id_for_label }}" class="text-muted">
+                    <i class="fas fa-tint me-1"></i>{{ form.blood_group.label }}
+                </label>
+                {% if form.blood_group.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.blood_group.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.medical_category }}
+                <label for="{{ form.medical_category.id_for_label }}" class="text-muted">
+                    <i class="fas fa-stethoscope me-1"></i>{{ form.medical_category.label }}
+                </label>
+                {% if form.medical_category.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.medical_category.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.medical_category_text }}
+                <label for="{{ form.medical_category_text.id_for_label }}" class="text-muted">
+                    <i class="fas fa-edit me-1"></i>{{ form.medical_category_text.label }}
+                </label>
+                {% if form.medical_category_text.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.medical_category_text.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.nearest_echs_text }}
+                <label for="{{ form.nearest_echs_text.id_for_label }}" class="text-muted">
+                    <i class="fas fa-hospital me-1"></i>{{ form.nearest_echs_text.label }}
+                </label>
+                {% if form.nearest_echs_text.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.nearest_echs_text.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.disabilities }}
+                <label for="{{ form.disabilities.id_for_label }}" class="text-muted">
+                    <i class="fas fa-wheelchair me-1"></i>{{ form.disabilities.label }}
+                </label>
+                {% if form.disabilities.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.disabilities.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.insurance_details }}
+                <label for="{{ form.insurance_details.id_for_label }}" class="text-muted">
+                    <i class="fas fa-shield-alt me-1"></i>{{ form.insurance_details.label }}
+                </label>
+                {% if form.insurance_details.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.insurance_details.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.medical_conditions }}
+                <label for="{{ form.medical_conditions.id_for_label }}" class="text-muted">
+                    <i class="fas fa-notes-medical me-1"></i>{{ form.medical_conditions.label }}
+                </label>
+                {% if form.medical_conditions.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.medical_conditions.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Family Information Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-info mb-3">
+                    <i class="fas fa-home me-2"></i>Family Information
+                </h4>
+                <hr class="border-info">
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.spouse_name }}
+                <label for="{{ form.spouse_name.id_for_label }}" class="text-muted">
+                    <i class="fas fa-heart me-1"></i>{{ form.spouse_name.label }}
+                </label>
+                {% if form.spouse_name.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.spouse_name.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.spouse_contact }}
+                <label for="{{ form.spouse_contact.id_for_label }}" class="text-muted">
+                    <i class="fas fa-phone me-1"></i>{{ form.spouse_contact.label }}
+                </label>
+                {% if form.spouse_contact.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.spouse_contact.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.spouse_employed }}
+                <label for="{{ form.spouse_employed.id_for_label }}" class="text-muted">
+                    <i class="fas fa-briefcase me-1"></i>{{ form.spouse_employed.label }}
+                </label>
+                {% if form.spouse_employed.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.spouse_employed.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.children_count }}
+                <label for="{{ form.children_count.id_for_label }}" class="text-muted">
+                    <i class="fas fa-child me-1"></i>{{ form.children_count.label }}
+                </label>
+                {% if form.children_count.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.children_count.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.spouse_medical_details }}
+                <label for="{{ form.spouse_medical_details.id_for_label }}" class="text-muted">
+                    <i class="fas fa-notes-medical me-1"></i>{{ form.spouse_medical_details.label }}
+                </label>
+                {% if form.spouse_medical_details.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.spouse_medical_details.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Welfare & Financial Information Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header">
+                <h4 class="text-success mb-3">
+                    <i class="fas fa-hand-holding-usd me-2"></i>Welfare & Financial Information
+                </h4>
+                <hr class="border-success">
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.pension_details }}
+                <label for="{{ form.pension_details.id_for_label }}" class="text-muted">
+                    <i class="fas fa-money-check me-1"></i>{{ form.pension_details.label }}
+                </label>
+                {% if form.pension_details.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.pension_details.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.bank_account }}
+                <label for="{{ form.bank_account.id_for_label }}" class="text-muted">
+                    <i class="fas fa-university me-1"></i>{{ form.bank_account.label }}
+                </label>
+                {% if form.bank_account.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.bank_account.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="form-floating">
+                {{ form.bank_name }}
+                <label for="{{ form.bank_name.id_for_label }}" class="text-muted">
+                    <i class="fas fa-building me-1"></i>{{ form.bank_name.label }}
+                </label>
+                {% if form.bank_name.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.bank_name.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                {{ form.welfare_schemes }}
+                <label for="{{ form.welfare_schemes.id_for_label }}" class="text-muted">
+                    <i class="fas fa-hands-helping me-1"></i>{{ form.welfare_schemes.label }}
+                </label>
+                {% if form.welfare_schemes.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.welfare_schemes.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.next_of_kin }}
+                <label for="{{ form.next_of_kin.id_for_label }}" class="text-muted">
+                    <i class="fas fa-user-friends me-1"></i>{{ form.next_of_kin.label }}
+                </label>
+                {% if form.next_of_kin.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.next_of_kin.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.next_of_kin_relation }}
+                <label for="{{ form.next_of_kin_relation.id_for_label }}" class="text-muted">
+                    <i class="fas fa-link me-1"></i>{{ form.next_of_kin_relation.label }}
+                </label>
+                {% if form.next_of_kin_relation.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.next_of_kin_relation.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="form-floating">
+                {{ form.next_of_kin_contact }}
+                <label for="{{ form.next_of_kin_contact.id_for_label }}" class="text-muted">
+                    <i class="fas fa-phone me-1"></i>{{ form.next_of_kin_contact.label }}
+                </label>
+                {% if form.next_of_kin_contact.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.next_of_kin_contact.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-end gap-3">
+                <a href="{{ cancel_url|default:'#' }}" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-times me-2"></i>{{ cancel_label|default:'Cancel' }}
+                </a>
+                <button type="submit" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-save me-2"></i>{{ submit_label|default:'Save Changes' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+}
+
+.section-header h4 {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 1.1rem;
+    color: #1e40af;
+    margin-bottom: 1rem;
+}
+
+.section-header hr {
+    border-width: 2px;
+    opacity: 0.3;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select {
+    border: 3px solid #1e40af;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    padding: 1rem 0.75rem;
+    height: calc(3.5rem + 2px);
+}
+
+.form-floating > .form-control:focus,
+.form-floating > .form-select:focus {
+    border-color: #1e40af;
+    box-shadow: 0 0 0 0.25rem rgba(30, 64, 175, 0.15);
+    background-color: #f8fafc;
+}
+
+.form-floating > label {
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 1rem 0.75rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select:focus ~ label,
+.form-floating > .form-select:not([value=""]) ~ label {
+    color: #1e40af;
+    font-weight: 700;
+}
+
+.form-check-input:checked {
+    background-color: #1e40af;
+    border-color: #1e40af;
+}
+
+.form-check-input:focus {
+    border-color: #1e40af;
+    box-shadow: 0 0 0 0.25rem rgba(30, 64, 175, 0.15);
+}
+
+.form-check-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95rem;
+    margin-left: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.form-control,
+.form-select {
+    border: 3px solid #1e40af;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #1e40af;
+    box-shadow: 0 0 0 0.25rem rgba(30, 64, 175, 0.15);
+    background-color: #f8fafc;
+}
+
+textarea.form-control {
+    min-height: 120px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    transition: all 0.3s ease;
+    padding: 0.85rem 2.5rem;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.btn-outline-secondary {
+    border-radius: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-width: 2px;
+    padding: 0.85rem 2.5rem;
+}
+
+.btn-outline-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+}
+
+.card-header {
+    border-radius: 16px 16px 0 0 !important;
+    padding: 1.5rem 2rem;
+}
+
+input[type="file"] {
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-color: #f9fafb;
+}
+
+input[type="file"]:hover {
+    border-color: #1e40af;
+    background-color: #f0f9ff;
+}
+
+.invalid-feedback {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 1.5rem !important;
+    }
+
+    .btn-lg {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .section-header h4 {
+        font-size: 1rem;
+    }
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+    
+    // Auto-save functionality
+    let autoSaveTimer;
+    const AUTOSAVE_DELAY = 3000; // 3 seconds after user stops typing
+    const STORAGE_KEY = 'veteran_profile_autosave';
+    
+    function saveFormData() {
+        const form = document.querySelector('.veteran-member-form');
+        if (!form) return;
+        
+        const formData = {};
+        const inputs = form.querySelectorAll('input, select, textarea');
+        
+        inputs.forEach(input => {
+            if (input.type === 'file') return; // Skip file inputs
+            if (input.type === 'checkbox') {
+                formData[input.name] = input.checked;
+            } else {
+                formData[input.name] = input.value;
+            }
+        });
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            data: formData,
+            timestamp: Date.now()
+        }));
+        
+        // Show auto-save indicator
+        showAutoSaveStatus('Saved automatically');
+    }
+    
+    function loadFormData() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            
+            const { data, timestamp } = JSON.parse(saved);
+            const age = Date.now() - timestamp;
+            
+            // Only restore if less than 24 hours old
+            if (age > 24 * 60 * 60 * 1000) {
+                localStorage.removeItem(STORAGE_KEY);
+                return;
+            }
+            
+            const form = document.querySelector('.veteran-member-form');
+            if (!form) return;
+            
+            Object.keys(data).forEach(name => {
+                const input = form.querySelector(`[name="${name}"]`);
+                if (!input) return;
+                
+                if (input.type === 'checkbox') {
+                    input.checked = data[name];
+                } else if (input.value === '' || input.value === null) {
+                    // Only restore if field is empty
+                    input.value = data[name];
+                }
+            });
+            
+            showAutoSaveStatus('Previous data restored');
+        } catch (e) {
+            console.log('Auto-save restore failed:', e);
+        }
+    }
+    
+    function showAutoSaveStatus(message) {
+        let indicator = document.getElementById('autosave-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'autosave-indicator';
+            indicator.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 14px;
+                z-index: 9999;
+                opacity: 0;
+                transition: opacity 0.3s;
+            `;
+            document.body.appendChild(indicator);
+        }
+        
+        indicator.textContent = message;
+        indicator.style.opacity = '1';
+        
+        setTimeout(() => {
+            indicator.style.opacity = '0';
+        }, 2000);
+    }
+    
+    function setupAutoSave() {
+        const form = document.querySelector('.veteran-member-form');
+        if (!form) return;
+        
+        const inputs = form.querySelectorAll('input, select, textarea');
+        
+        inputs.forEach(input => {
+            if (input.type === 'file') return; // Skip file inputs
+            
+            input.addEventListener('input', () => {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(saveFormData, AUTOSAVE_DELAY);
+            });
+            
+            input.addEventListener('change', () => {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(saveFormData, AUTOSAVE_DELAY);
+            });
+        });
+        
+        // Clear auto-save on successful form submission
+        form.addEventListener('submit', () => {
+            localStorage.removeItem(STORAGE_KEY);
+        });
+    }
+    
+    window.addEventListener('load', function() {
+        highlightErrors();
+        loadFormData(); // Restore previous data
+        setupAutoSave(); // Setup auto-save
+
+        const forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    highlightErrors();
+                    scrollToFirstError();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+
+    // Session keep-alive functionality
+    function keepSessionAlive() {
+        fetch('/veteran_profile_edit/', {
+            method: 'HEAD',
+            credentials: 'same-origin'
+        }).catch(() => {
+            // Session expired - show warning
+            showAutoSaveStatus('Session expired - please refresh page');
+        });
+    }
+    
+    // Keep session alive every 10 minutes
+    setInterval(keepSessionAlive, 10 * 60 * 1000);
+    
+    function highlightErrors() {
+        const errorFields = document.querySelectorAll('.invalid-feedback');
+        errorFields.forEach(function(errorDiv) {
+            let fieldWrapper = null;
+            if (errorDiv.closest('.form-floating')) {
+                fieldWrapper = errorDiv.closest('.form-floating').querySelector('input, select, textarea');
+            } else if (errorDiv.closest('.form-check')) {
+                fieldWrapper = errorDiv.closest('.form-check').querySelector('input');
+            } else {
+                fieldWrapper = errorDiv.previousElementSibling;
+            }
+
+            if (fieldWrapper && (fieldWrapper.classList.contains('form-control') || fieldWrapper.classList.contains('form-select') || fieldWrapper.classList.contains('form-check-input'))) {
+                fieldWrapper.classList.add('is-invalid');
+                const label = fieldWrapper.closest('.form-floating') ? fieldWrapper.closest('.form-floating').querySelector('label') : fieldWrapper.nextElementSibling;
+                if (label && label.tagName === 'LABEL') {
+                    label.style.color = '#dc3545';
+                    label.style.fontWeight = '600';
+                }
+            }
+        });
+    }
+
+    function scrollToFirstError() {
+        const firstError = document.querySelector('.is-invalid, .invalid-feedback');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (['INPUT', 'SELECT', 'TEXTAREA'].includes(firstError.tagName)) {
+                setTimeout(() => firstError.focus(), 500);
+            }
+        }
+    }
+})();
+
+function setMaxDateToToday() {
+    const today = new Date().toISOString().split('T')[0];
+    const dateFields = [
+        'id_date_of_birth',
+        'id_enrolled_date',
+        'id_date_of_joining',
+        'id_retired_on',
+        'id_association_date',
+        'id_subscription_paid_on'
+    ];
+
+    dateFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.setAttribute('max', today);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setMaxDateToToday();
+
+    const formElements = document.querySelectorAll('.form-floating, .form-check');
+    formElements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            element.style.transition = 'all 0.5s ease';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, index * 50);
+    });
+
+    const subscriptionPaidInput = document.getElementById('id_subscription_paid_on');
+    const subscriptionDueInput = document.getElementById('id_subscription_due_date');
+
+    if (subscriptionPaidInput && subscriptionDueInput) {
+        subscriptionPaidInput.addEventListener('change', function() {
+            if (this.value) {
+                const paidDate = new Date(this.value);
+                const dueDate = new Date(paidDate);
+                dueDate.setDate(dueDate.getDate() + 365);
+
+                const year = dueDate.getFullYear();
+                const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+                const day = String(dueDate.getDate()).padStart(2, '0');
+
+                subscriptionDueInput.value = `${year}-${month}-${day}`;
+            } else {
+                subscriptionDueInput.value = '';
+            }
+        });
+    }
+});
+</script>
+

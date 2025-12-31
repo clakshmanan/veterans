@@ -1,0 +1,113 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} - Events{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ event.title }}</h3>
+                    <div class="card-tools">
+                        <span class="badge badge-{{ event.category.color }}">{{ event.category.name }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if event.banner_image %}
+                    <img src="{{ event.banner_image.url }}" class="img-fluid mb-3 rounded">
+                    {% endif %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-calendar mr-2"></i>Event Details</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Start:</strong> {{ event.start_date|date:"F d, Y g:i A" }}</li>
+                                <li><strong>End:</strong> {{ event.end_date|date:"F d, Y g:i A" }}</li>
+                                <li><strong>Venue:</strong> {{ event.venue }}</li>
+                                <li><strong>Address:</strong> {{ event.address }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-info-circle mr-2"></i>Registration Info</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Fee:</strong> 
+                                    {% if event.registration_fee > 0 %}
+                                    <span class="text-success">₹{{ event.registration_fee }}</span>
+                                    {% else %}
+                                    <span class="text-success">Free</span>
+                                    {% endif %}
+                                </li>
+                                {% if event.max_participants %}
+                                <li><strong>Max Participants:</strong> {{ event.max_participants }}</li>
+                                <li><strong>Registered:</strong> {{ event.get_registration_count }}</li>
+                                {% endif %}
+                                {% if event.registration_deadline %}
+                                <li><strong>Deadline:</strong> {{ event.registration_deadline|date:"F d, Y" }}</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h5><i class="fas fa-align-left mr-2"></i>Description</h5>
+                    <p>{{ event.description|linebreaks }}</p>
+                    
+                    <h5><i class="fas fa-phone mr-2"></i>Contact Information</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Contact Person:</strong> {{ event.contact_person }}</li>
+                        <li><strong>Phone:</strong> {{ event.contact_phone }}</li>
+                        {% if event.contact_email %}
+                        <li><strong>Email:</strong> {{ event.contact_email }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Registration</h4>
+                </div>
+                <div class="card-body">
+                    {% if existing_registration %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <strong>You are registered!</strong>
+                            <br>Status: <span class="badge badge-{{ existing_registration.status|yesno:'success,warning' }}">
+                                {{ existing_registration.get_status_display }}
+                            </span>
+                            {% if existing_registration.payment_required %}
+                            <br>Payment: <span class="badge badge-{{ existing_registration.payment_status|yesno:'success,danger' }}">
+                                {{ existing_registration.payment_status|title }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    {% elif can_register %}
+                        <div class="text-center">
+                            <h5 class="text-success mb-3">Registration Open</h5>
+                            <a href="{% url 'register_for_event' event.id %}" class="btn btn-success btn-lg btn-block">
+                                <i class="fas fa-user-plus mr-2"></i>Register Now
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Registration is not available
+                        </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <a href="{% url 'events_list' %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,208 @@
+
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="services-page">
+<div class="container py-5">
+<div class="text-center mb-5">
+    <h2 class="fw-bold text-white mb-3">
+        <i class="fas fa-map-marked-alt me-2"></i>Our State Heads
+    </h2>
+    <p class="lead text-white mb-4">Serving veterans across India with dedicated state associations</p>
+    <a href="{% url 'index' %}" class="btn btn-outline-light btn-lg">
+        <i class="fas fa-arrow-left me-2"></i>Back to Homepage
+    </a>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-6 mx-auto">
+        <div class="search-box">
+            <input type="text" id="stateSearch" class="form-control form-control-lg" placeholder="🔍 Search for your state...">
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for state in states %}
+    <div class="col-lg-3 col-md-4 col-sm-6 state-card">
+        <div class="card state-card-modern h-100">
+            <div class="card-body text-center p-4">
+                
+                <!-- State Admin Image -->
+                <div class="state-admin-image mb-3">
+                    <img src="{% static 'images/state_admins/' %}{{ state.code }}.jpg" 
+                         alt="{{ state.name }} Admin" 
+                         class="rounded-circle admin-img" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="admin-placeholder" style="display: none;">
+                        <i class="fas fa-user-tie fa-3x"></i>
+                    </div>
+                </div>
+                
+                <h5 class="card-title mb-2 text-primary fw-bold">{{ state.name }}</h5>
+                <p class="card-text mb-3"><span class="badge bg-primary">{{ state.code }}</span></p>
+                
+                <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-4 fw-bold">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+            </div>
+            
+            <div class="card-footer bg-light border-0 text-center">
+                <small class="text-muted fw-semibold">
+                    <i class="fas fa-map-marker-alt me-1 text-danger"></i>ICGVWA {{ state.code }}
+                </small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.services-page {
+    background: #212529;
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+.search-box input {
+    border-radius: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.search-box input:focus {
+    border-color: #fff;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+    background: #fff;
+}
+
+.state-card-modern {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease;
+    overflow: hidden;
+    background: #fff;
+}
+
+.state-card-modern:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.state-admin-image {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.admin-img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border: 4px solid #3b82f6;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.state-card-modern:hover .admin-img {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.admin-placeholder {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1e40af;
+    border: 4px solid #3b82f6;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.state-card-modern:hover .admin-placeholder {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: #fff;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.btn-primary {
+    background: #1e40af !important;
+    border: none;
+    border-radius: 25px;
+    color: #fff !important;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    padding: 10px 25px;
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4);
+}
+
+.btn-primary:hover {
+    background: #fbbf24 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+    color: #000 !important;
+}
+
+.btn-outline-light {
+    border: 2px solid #fff;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 25px;
+    padding: 10px 30px;
+}
+
+.btn-outline-light:hover {
+    background: #fff;
+    color: #1e40af;
+    transform: translateY(-2px);
+}
+
+.card-footer {
+    padding: 12px;
+}
+
+@media (max-width: 768px) {
+    .state-admin-image,
+    .admin-placeholder,
+    .admin-img {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .admin-placeholder i {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        const input = document.getElementById('stateSearch');
+        if (!input) return;
+        input.addEventListener('keyup', function () {
+            const filter = this.value.trim().toLowerCase();
+            document.querySelectorAll('.state-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    })();
+</script>
+</div>
+</div>
+{% endblock %}

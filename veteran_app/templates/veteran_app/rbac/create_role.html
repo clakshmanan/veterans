@@ -1,0 +1,106 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block title %}Create Role - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-plus text-primary me-2"></i>Create New Role</h2>
+                    <p class="text-muted mb-0">Define a new role with specific permissions</p>
+                </div>
+                <a href="{% url 'manage_roles' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Roles
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Role Form -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Role Name *</label>
+                            <input type="text" name="name" class="form-control" required placeholder="Enter role name">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Describe what this role can do"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Permissions</label>
+                            {% if permissions %}
+                                <div class="row">
+                                    {% regroup permissions by category as permission_groups %}
+                                    {% for group in permission_groups %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0">{{ group.grouper|title }}</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                {% for permission in group.list %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="permissions" value="{{ permission.id }}" id="perm_{{ permission.id }}">
+                                                    <label class="form-check-label" for="perm_{{ permission.id }}">
+                                                        {{ permission.name }}
+                                                        {% if permission.description %}
+                                                        <small class="text-muted d-block">{{ permission.description }}</small>
+                                                        {% endif %}
+                                                    </label>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <strong>No permissions found!</strong> 
+                                    You need to initialize the RBAC system first.
+                                    <a href="{% url 'initialize_rbac' %}" class="btn btn-sm btn-primary ms-2" onclick="return confirm('This will create default permissions and roles. Continue?')">Initialize RBAC</a>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'manage_roles' %}" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Create Role
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Permission Categories</h6>
+                </div>
+                <div class="card-body">
+                    {% for category in permission_categories %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>{{ category|title }}</span>
+                        <span class="badge bg-primary">{{ permissions|length }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

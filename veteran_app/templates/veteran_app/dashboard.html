@@ -1,0 +1,586 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="page-header">
+                <h2 class="text-gradient mb-2">
+                    <i class="fas fa-chart-line me-2"></i>ICGVWA Dashboard
+                </h2>
+                <p class="lead text-muted">Overview of Indian Coast Guard Veteran Welfare Association statistics and quick access to services.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric Cards Row -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card metric-card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-2">Total Veterans</h5>
+                            <h2 class="card-text mb-0">{{ total_members|default:"0" }}</h2>
+                            <small class="opacity-75">Registered Members</small>
+                        </div>
+                        <div>
+                            <i class="fas fa-users fa-3x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-white-50">
+                        <i class="fas fa-info-circle me-1"></i>Total registered veterans across all states
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card metric-card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-2">Active Members</h5>
+                            <h2 class="card-text mb-0">{{ active_members|default:"0" }}</h2>
+                            <small class="opacity-75">Current Subscribers</small>
+                        </div>
+                        <div>
+                            <i class="fas fa-user-check fa-3x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-white-50">
+                        <i class="fas fa-info-circle me-1"></i>Veterans with active membership status
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card metric-card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-2">States Covered</h5>
+                            <h2 class="card-text mb-0">{{ states_covered|default:"0" }}</h2>
+                            <small class="opacity-75">Pan-India Presence</small>
+                        </div>
+                        <div>
+                            <i class="fas fa-map-marked fa-3x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-white-50">
+                        <i class="fas fa-info-circle me-1"></i>States with ICGVWA representation
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Statistics Row -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card metric-card bg-gradient-warning text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-birthday-cake fa-2x mb-3"></i>
+                    <h5 class="card-title">Birthdays Today</h5>
+                    <h3 class="card-text">{{ veteran_birthdays|length|default:"0" }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card metric-card bg-gradient-danger text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-bell fa-2x mb-3"></i>
+                    <h5 class="card-title">Active Notifications</h5>
+                    <h3 class="card-text">{{ state_notifications|length|default:"0" }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card metric-card bg-gradient-info text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x mb-3"></i>
+                    <h5 class="card-title">This Month</h5>
+                    <h3 class="card-text">{{ current_month_year }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card metric-card bg-gradient-success text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-sync-alt fa-2x mb-3"></i>
+                    <h5 class="card-title">System Status</h5>
+                    <h3 class="card-text">Online</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-birthday-cake me-2"></i>Today's Birthday
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if veteran_birthdays %}
+                        <div class="list-group list-group-flush">
+                            {% for birthday in veteran_birthdays %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold">{{ birthday.veteran.name }}</h6>
+                                        <small class="text-muted"><i class="fas fa-star me-1"></i>{{ birthday.veteran.rank.name }}</small>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">{{ birthday.age }} years</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ birthday.veteran.state.name }}</small>
+                                    <small class="text-muted"><i class="fas fa-phone me-1"></i>{{ birthday.veteran.contact }}</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No birthdays today.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white position-relative">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>Recent Notifications
+                        <span class="notification-live-indicator"></span>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if state_notifications %}
+                        <div class="notifications-container">
+                            <div class="notifications-scroll-wrapper">
+                                <div class="notifications-scroll-content" id="notificationsScroll">
+                                    {% for notification in state_notifications %}
+                                    <div class="notification-item">
+                                        <div class="notification-header">
+                                            <h6 class="notification-title">{{ notification.title }}</h6>
+                                            <small class="notification-date">{{ notification.created_at|date:"M d, H:i" }}</small>
+                                        </div>
+                                        <p class="notification-message">{{ notification.message|truncatewords:20 }}</p>
+                                        <div class="notification-footer">
+                                            {% if notification.state %}
+                                                <span class="notification-state">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    {{ notification.state.name }}
+                                                </span>
+                                            {% else %}
+                                                <span class="notification-state">
+                                                    <i class="fas fa-globe"></i>
+                                                    All States
+                                                </span>
+                                            {% endif %}
+                                            <span class="notification-priority">
+                                                <i class="fas fa-circle text-success"></i>
+                                                Active
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <!-- Duplicate notifications for seamless loop -->
+                                    {% for notification in state_notifications %}
+                                    <div class="notification-item">
+                                        <div class="notification-header">
+                                            <h6 class="notification-title">{{ notification.title }}</h6>
+                                            <small class="notification-date">{{ notification.created_at|date:"M d, H:i" }}</small>
+                                        </div>
+                                        <p class="notification-message">{{ notification.message|truncatewords:20 }}</p>
+                                        <div class="notification-footer">
+                                            {% if notification.state %}
+                                                <span class="notification-state">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    {{ notification.state.name }}
+                                                </span>
+                                            {% else %}
+                                                <span class="notification-state">
+                                                    <i class="fas fa-globe"></i>
+                                                    All States
+                                                </span>
+                                            {% endif %}
+                                            <span class="notification-priority">
+                                                <i class="fas fa-circle text-success"></i>
+                                                Active
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="no-notifications">
+                            <div class="text-center py-4">
+                                <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No recent notifications to display.</p>
+                                <small class="text-muted">Notifications will appear here when available.</small>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    border-left: 5px solid #667eea;
+}
+
+.metric-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.metric-card .card-body {
+    padding: 2rem;
+}
+
+.metric-card .card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.metric-card .card-text {
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+.quick-access-btn {
+    padding: 1.5rem 1rem;
+    min-height: 140px;
+    transition: all 0.3s ease;
+    border-width: 2px;
+}
+
+.quick-access-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #1a508d 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Notifications Scrolling Styles */
+.notification-live-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #ff4757;
+    border-radius: 50%;
+    margin-left: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+    }
+}
+
+.notifications-container {
+    height: 280px;
+    overflow: hidden;
+    position: relative;
+}
+
+.notifications-scroll-wrapper {
+    height: 100%;
+    overflow: hidden;
+}
+
+.notifications-scroll-content {
+    animation: scrollNotifications 30s linear infinite;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes scrollNotifications {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-50%);
+    }
+}
+
+.notification-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: between;
+    align-items: start;
+    margin-bottom: 8px;
+}
+
+.notification-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    color: #495057;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.notification-date {
+    color: #6c757d;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.notification-message {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 5px 0 10px 0;
+    line-height: 1.4;
+}
+
+.notification-footer {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.notification-state {
+    color: #17a2b8;
+    margin-right: 15px;
+}
+
+.notification-state i {
+    margin-right: 5px;
+}
+
+.notification-priority {
+    color: #28a745;
+    margin-left: auto;
+}
+
+.notification-priority i {
+    margin-right: 5px;
+    font-size: 0.6rem;
+}
+
+.no-notifications {
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hover pause effect */
+.notifications-container:hover .notifications-scroll-content {
+    animation-play-state: paused;
+}
+
+/* Gradient overlay for smooth edges */
+.notifications-container::before,
+.notifications-container::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 20px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.notifications-container::before {
+    top: 0;
+    background: linear-gradient(to bottom, white, transparent);
+}
+
+.notifications-container::after {
+    bottom: 0;
+    background: linear-gradient(to top, white, transparent);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem;
+    }
+    
+    .metric-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .metric-card .card-text {
+        font-size: 2rem;
+    }
+    
+    .quick-access-btn {
+        min-height: 120px;
+        padding: 1rem;
+    }
+    
+    .notifications-container {
+        height: 250px;
+    }
+    
+    .notification-item {
+        padding: 12px 15px;
+        min-height: 90px;
+    }
+    
+    .notification-title {
+        font-size: 0.9rem;
+    }
+    
+    .notification-message {
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced notification scrolling behavior
+    const notificationsContainer = document.querySelector('.notifications-container');
+    const scrollContent = document.getElementById('notificationsScroll');
+    
+    if (notificationsContainer && scrollContent) {
+        // Pause on hover
+        notificationsContainer.addEventListener('mouseenter', function() {
+            scrollContent.style.animationPlayState = 'paused';
+        });
+        
+        // Resume on mouse leave
+        notificationsContainer.addEventListener('mouseleave', function() {
+            scrollContent.style.animationPlayState = 'running';
+        });
+        
+        // Add click interactions to notification items
+        const notificationItems = document.querySelectorAll('.notification-item');
+        notificationItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                // Add ripple effect
+                this.style.backgroundColor = '#e3f2fd';
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                }, 300);
+                
+                // You can add notification click handling here
+                console.log('Notification clicked:', this.querySelector('.notification-title').textContent);
+            });
+        });
+        
+        // Adjust scroll speed based on number of notifications
+        const notificationCount = notificationItems.length / 2; // Divided by 2 because we duplicate
+        if (notificationCount > 0) {
+            const baseSpeed = 30; // Base animation duration in seconds
+            const adjustedSpeed = Math.max(20, baseSpeed + (notificationCount * 2));
+            scrollContent.style.animationDuration = adjustedSpeed + 's';
+        }
+    }
+    
+    // Auto-refresh notifications every 5 minutes
+    setInterval(function() {
+        // You can implement AJAX refresh here if needed
+        console.log('Auto-refreshing notifications...');
+    }, 300000); // 5 minutes
+    
+    // Add smooth transitions to metric cards
+    const metricCards = document.querySelectorAll('.metric-card');
+    metricCards.forEach(function(card, index) {
+        card.style.animationDelay = (index * 0.1) + 's';
+        card.classList.add('animate-in');
+    });
+});
+
+// Add CSS animation for metric cards entrance
+const style = document.createElement('style');
+style.textContent = `
+    .animate-in {
+        animation: slideInUp 0.6s ease-out forwards;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    
+    @keyframes slideInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

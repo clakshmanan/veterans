@@ -1,0 +1,89 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block title %}Job Portal - ICGVWA{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-briefcase text-primary"></i> Job Portal
+                    {% if user.is_superuser %}<small class="text-muted">(Admin View)</small>{% endif %}
+                    </h2>
+                    <p class="text-muted mb-0">Connect veterans with employment opportunities</p>
+                </div>
+                <div>
+                    {% if user.veteran_profile %}
+                    <a href="{% url 'job_portal_add' %}" class="btn btn-primary me-2">
+                        <i class="fas fa-plus-circle"></i> Add Job Profile
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'veteran_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for job_seeker in job_seekers %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 hover-lift">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-tie text-primary"></i> {{ job_seeker.name }}
+                    </h5>
+                    <p class="card-text">
+                        <strong><i class="fas fa-tag"></i> Type:</strong> {{ job_seeker.get_applicant_type_display }}<br>
+                        <strong><i class="fas fa-graduation-cap"></i> Qualification:</strong> {{ job_seeker.qualification }}<br>
+                        {% if job_seeker.specialization %}
+                        <strong><i class="fas fa-certificate"></i> Specialization:</strong> {{ job_seeker.specialization }}<br>
+                        {% endif %}
+                        {% if job_seeker.preferred_location %}
+                        <strong><i class="fas fa-location-arrow"></i> Preferred Location:</strong> {{ job_seeker.preferred_location }}<br>
+                        {% endif %}
+                    </p>
+                    {% if job_seeker.skills %}
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fas fa-tools"></i> {{ job_seeker.skills|truncatewords:15 }}
+                        </small>
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ job_seeker.veteran.state.name }}
+                        </small>
+                        <div>
+                            {% if user.veteran_profile and job_seeker.veteran == user.veteran_profile.veteran_member %}
+                            <a href="{% url 'job_portal_edit' job_seeker.id %}" class="btn btn-sm btn-outline-primary me-1" title="Edit Profile">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'job_portal_delete' job_seeker.id %}" class="btn btn-sm btn-outline-danger" 
+                               onclick="return confirm('Are you sure you want to delete this job profile?')" title="Delete Profile">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                            <small class="text-muted ms-2">
+                                <i class="fas fa-calendar"></i> {{ job_seeker.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No job seekers found. Be the first to add your profile!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

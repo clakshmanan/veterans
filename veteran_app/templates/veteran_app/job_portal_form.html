@@ -1,0 +1,94 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block title %}{% if editing_job %}Edit{% else %}Add{% endif %} Job Profile - ICGVWA{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-briefcase"></i> {% if editing_job %}Edit{% else %}Add{% endif %} Job Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Applicant Type</label>
+                                {{ form.applicant_type }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Child (if applicable)</label>
+                                {{ form.child }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contact</label>
+                                {{ form.contact }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Qualification</label>
+                                {{ form.qualification }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Specialization</label>
+                                {{ form.specialization }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Preferred Location</label>
+                                {{ form.preferred_location }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Experience</label>
+                            {{ form.experience }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Skills</label>
+                            {{ form.skills }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Resume</label>
+                            {{ form.resume }}
+                            {% if editing_job and editing_job.resume %}
+                            <div class="mt-2">
+                                <small class="text-muted">Current resume:</small><br>
+                                <a href="{{ editing_job.resume.url }}" class="btn btn-sm btn-outline-success" download>
+                                    <i class="fas fa-download"></i> Download Current Resume
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'job_portal' %}" class="btn btn-primary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">{% if editing_job %}Update Profile{% else %}Add Profile{% endif %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

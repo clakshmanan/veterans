@@ -1,0 +1,285 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="background-color: white; min-height: 100vh; padding: 20px;">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-images me-2"></i>Carousel Management</h2>
+    <a href="{% url 'manage_data' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Data Management
+    </a>
+</div>
+
+<!-- Info Alert -->
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Carousel Management:</strong> 
+    <ul class="mb-0 mt-2">
+        <li><strong>First Slide (Fixed):</strong> The first slide is a fixed home page with custom dashboard and services. It cannot be modified through this interface.</li>
+        <li><strong>Additional Slides:</strong> You can add, edit, and delete additional slides below. The first position is reserved for the fixed home slide.</li>
+        <li><strong>Ordering:</strong> The first position (order=1) is reserved. Additional slides will be ordered starting from 2.</li>
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+{% if has_first_slide %}
+<div class="alert alert-warning mb-4">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <strong>Note:</strong> The first slide (order=1) exists in the database but is not shown here as it's managed separately.
+</div>
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Add New Slide Form -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-plus me-2"></i>Add New Carousel Slide</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'add_carousel_slide' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                    <input type="text" name="title" class="form-control" placeholder="Enter slide title" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Subtitle <span class="text-danger">*</span></label>
+                    <input type="text" name="subtitle" class="form-control" placeholder="Enter slide subtitle" required>
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Content <span class="text-danger">*</span></label>
+                    <textarea name="content" class="form-control" rows="3" placeholder="Enter slide content" required></textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Image <span class="text-danger">*</span></label>
+                    <input type="file" name="image" class="form-control" accept="image/*" required>
+                    <small class="form-text text-muted">Upload carousel image (JPG, PNG, GIF)</small>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Icon Class</label>
+                    <input type="text" name="icon_class" class="form-control" placeholder="fas fa-anchor">
+                    <small class="form-text text-muted">FontAwesome icon (optional)</small>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Background Color</label>
+                    <select name="background_color" class="form-select">
+                        <option value="bg-gradient-primary">Blue Gradient</option>
+                        <option value="bg-gradient-success">Green Gradient</option>
+                        <option value="bg-gradient-info">Light Blue Gradient</option>
+                        <option value="bg-gradient-warning">Orange Gradient</option>
+                        <option value="bg-gradient-danger">Red Gradient</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Order <span class="text-danger">*</span></label>
+                    <input type="number" name="order" class="form-control" value="2" min="2" required>
+                    <small class="form-text text-muted">Display order (2 or higher, 1 is reserved for home)</small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-check mt-4">
+                        <input type="checkbox" name="is_active" class="form-check-input" id="is_active_add" checked>
+                        <label class="form-check-label" for="is_active_add">Active (show on homepage)</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Add Slide
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Existing Slides -->
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-list me-2"></i>Existing Carousel Slides</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Subtitle</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for slide in slides %}
+                    <tr>
+                        <td>{{ slide.order }}</td>
+                        <td>
+                            {% if slide.image %}
+                                <img src="{{ slide.image.url }}" alt="{{ slide.title }}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 5px;">
+                            {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 40px; border-radius: 5px;">
+                                    <i class="{{ slide.icon_class }} text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ slide.title }}</td>
+                        <td>{{ slide.subtitle|truncatechars:50 }}</td>
+                        <td>
+                            {% if slide.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ slide.id }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <a href="{% url 'delete_carousel_slide' slide.id %}" class="btn btn-sm btn-outline-danger" 
+                               onclick="return confirm('Delete this slide?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editModal{{ slide.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Slide: {{ slide.title }}</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post" action="{% url 'edit_carousel_slide' slide.id %}" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <!-- Current Preview -->
+                                        <div class="alert alert-light border mb-4">
+                                            <h6 class="mb-3"><i class="fas fa-eye me-2"></i>Current Slide Preview:</h6>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    {% if slide.image %}
+                                                        <img src="{{ slide.image.url }}" alt="{{ slide.title }}" class="img-fluid rounded shadow-sm">
+                                                    {% else %}
+                                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 150px; border-radius: 10px;">
+                                                            <i class="{{ slide.icon_class }} fa-3x"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h5 class="text-primary">{{ slide.title }}</h5>
+                                                    <h6 class="text-muted">{{ slide.subtitle }}</h6>
+                                                    <p class="mb-0">{{ slide.content|truncatewords:30 }}</p>
+                                                    <div class="mt-2">
+                                                        <span class="badge {{ slide.background_color }}">{{ slide.background_color }}</span>
+                                                        <span class="badge bg-secondary">Order: {{ slide.order }}</span>
+                                                        {% if slide.is_active %}
+                                                            <span class="badge bg-success">Active</span>
+                                                        {% else %}
+                                                            <span class="badge bg-warning">Inactive</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <hr class="my-4">
+                                        <h6 class="mb-3"><i class="fas fa-pencil-alt me-2"></i>Edit Slide Details:</h6>
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Title</label>
+                                                <input type="text" name="title" class="form-control" value="{{ slide.title }}" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Subtitle</label>
+                                                <input type="text" name="subtitle" class="form-control" value="{{ slide.subtitle }}" required>
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label class="form-label">Content</label>
+                                                <textarea name="content" class="form-control" rows="4" required>{{ slide.content }}</textarea>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Image</label>
+                                                <input type="file" name="image" class="form-control" accept="image/*">
+                                                {% if slide.image %}
+                                                    <div class="mt-2">
+                                                        <img src="{{ slide.image.url }}" alt="Current" style="max-width: 100px; border-radius: 5px;">
+                                                        <small class="d-block text-muted">Current image (leave empty to keep)</small>
+                                                    </div>
+                                                {% else %}
+                                                    <small class="text-muted">No image uploaded</small>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Icon Class</label>
+                                                <input type="text" name="icon_class" class="form-control" value="{{ slide.icon_class }}">
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Background Color</label>
+                                                <select name="background_color" class="form-select">
+                                                    <option value="bg-gradient-primary" {% if slide.background_color == 'bg-gradient-primary' %}selected{% endif %}>Blue Gradient</option>
+                                                    <option value="bg-gradient-success" {% if slide.background_color == 'bg-gradient-success' %}selected{% endif %}>Green Gradient</option>
+                                                    <option value="bg-gradient-info" {% if slide.background_color == 'bg-gradient-info' %}selected{% endif %}>Light Blue Gradient</option>
+                                                    <option value="bg-gradient-warning" {% if slide.background_color == 'bg-gradient-warning' %}selected{% endif %}>Orange Gradient</option>
+                                                    <option value="bg-gradient-danger" {% if slide.background_color == 'bg-gradient-danger' %}selected{% endif %}>Red Gradient</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Order</label>
+                                                <input type="number" name="order" class="form-control" value="{{ slide.order }}" min="1" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-check mt-4">
+                                                    <input type="checkbox" name="is_active" class="form-check-input" {% if slide.is_active %}checked{% endif %}>
+                                                    <label class="form-check-label">Active</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No carousel slides found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 15px;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+</style>
+</div>
+{% endblock %}

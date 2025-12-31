@@ -1,0 +1,256 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block title %}RBAC Management - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.rbac-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.rbac-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+}
+.audit-log {
+    border-left: 4px solid #007bff;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 0 8px 8px 0;
+}
+.permission-category {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-shield-alt text-primary me-2"></i>Role-Based Access Control</h2>
+                    <p class="text-muted mb-0">Manage roles, permissions, and user access across the system</p>
+                </div>
+                <div>
+                    <a href="{% url 'initialize_rbac' %}" class="btn btn-success me-2" onclick="return confirm('Initialize RBAC with default roles and permissions?')">
+                        <i class="fas fa-cog me-2"></i>Initialize RBAC
+                    </a>
+                    <a href="{% url 'rbac_audit_logs' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-history me-2"></i>Audit Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card rbac-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="stat-icon bg-primary me-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ stats.total_users }}</h3>
+                        <p class="text-muted mb-0">Total Users</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card rbac-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="stat-icon bg-success me-3">
+                        <i class="fas fa-user-tag"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ stats.total_roles }}</h3>
+                        <p class="text-muted mb-0">Active Roles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card rbac-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="stat-icon bg-warning me-3">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ stats.total_permissions }}</h3>
+                        <p class="text-muted mb-0">Permissions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card rbac-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="stat-icon bg-info me-3">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ stats.active_assignments }}</h3>
+                        <p class="text-muted mb-0">Role Assignments</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card rbac-card">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'manage_roles' %}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                                <i class="fas fa-user-tag fa-2x mb-2"></i>
+                                <span>Manage Roles</span>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'manage_permissions' %}" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                                <i class="fas fa-key fa-2x mb-2"></i>
+                                <span>Manage Permissions</span>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'user_role_management' %}" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                                <i class="fas fa-users-cog fa-2x mb-2"></i>
+                                <span>User Assignments</span>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'permission_matrix' %}" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                                <i class="fas fa-table fa-2x mb-2"></i>
+                                <span>Permission Matrix</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Role Distribution -->
+        <div class="col-lg-6 mb-4">
+            <div class="card rbac-card h-100">
+                <div class="card-header bg-gradient-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Role Distribution</h5>
+                </div>
+                <div class="card-body">
+                    {% for role in role_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="mb-0">{{ role.name }}</h6>
+                            <small class="text-muted">{{ role.user_count }} user{{ role.user_count|pluralize }}</small>
+                        </div>
+                        <div class="progress" style="width: 100px; height: 8px;">
+                            <div class="progress-bar bg-success" style="width: {% widthratio role.user_count stats.total_users 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No roles found. <a href="{% url 'initialize_rbac' %}">Initialize RBAC</a> to create default roles.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Permission Categories -->
+        <div class="col-lg-6 mb-4">
+            <div class="card rbac-card h-100">
+                <div class="card-header bg-gradient-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>Permission Categories</h5>
+                </div>
+                <div class="card-body">
+                    {% for category in permission_categories %}
+                    <div class="permission-category">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0 text-white">{{ category.category|title }}</h6>
+                                <small class="text-white-50">{{ category.count }} permission{{ category.count|pluralize }}</small>
+                            </div>
+                            <div class="badge bg-white text-dark">{{ category.count }}</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No permissions found. <a href="{% url 'initialize_rbac' %}">Initialize RBAC</a> to create default permissions.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card rbac-card">
+                <div class="card-header bg-gradient-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    {% for log in recent_logs %}
+                    <div class="audit-log">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ log.get_action_display }}</strong>
+                                {% if log.target_user %}
+                                    for user <span class="badge bg-primary">{{ log.target_user.username }}</span>
+                                {% endif %}
+                                {% if log.role %}
+                                    with role <span class="badge bg-success">{{ log.role.name }}</span>
+                                {% endif %}
+                                <br>
+                                <small class="text-muted">
+                                    by {{ log.user.username|default:"System" }} 
+                                    {% if log.ip_address %}from {{ log.ip_address }}{% endif %}
+                                </small>
+                            </div>
+                            <small class="text-muted">{{ log.timestamp|timesince }} ago</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No recent activity found.</p>
+                    {% endfor %}
+                    
+                    {% if recent_logs %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'rbac_audit_logs' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-2"></i>View All Logs
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

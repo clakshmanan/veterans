@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Indian Coast Guard Veteran Association</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <div class="brand-logo">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h1>Veteran Registration</h1>
+                <p>Subscribe / Create your account with following details</p>
+            </div>
+            
+            <div class="register-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            <i class="fas fa-exclamation-circle me-2"></i>{{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Progress Indicator -->
+                <div class="form-progress">
+                    <div class="progress-step active">
+                        <i class="fas fa-id-badge"></i>
+                    </div>
+                    <div class="progress-step active">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="progress-step active">
+                        <i class="fas fa-key"></i>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-sections-container">
+                        <!-- Section 1: Service Information -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-id-badge me-2"></i>Service Information
+                            </h4>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.name.id_for_label }}" class="form-label required">
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-user input-icon"></i>
+                                    {{ form.name }}
+                                </div>
+                                {% if form.name.errors %}
+                                    <div class="error-text">{{ form.name.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.service_number.id_for_label }}" class="form-label required">
+                                    Service Number <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-id-badge input-icon"></i>
+                                    {{ form.service_number }}
+                                </div>
+                                <div class="form-text">{{ form.service_number.help_text }}</div>
+                                {% if form.service_number.errors %}
+                                    <div class="error-text">{{ form.service_number.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.rank.id_for_label }}" class="form-label required">
+                                    Rank <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-shield-alt input-icon"></i>
+                                    {{ form.rank }}
+                                </div>
+                                {% if form.rank.errors %}
+                                    <div class="error-text">{{ form.rank.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.unit_served.id_for_label }}" class="form-label">
+                                    Last Unit Served
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-ship input-icon"></i>
+                                    {{ form.unit_served }}
+                                </div>
+                                {% if form.unit_served.errors %}
+                                    <div class="error-text">{{ form.unit_served.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Personal Information -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-user me-2"></i>Personal Information
+                            </h4>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.email.id_for_label }}" class="form-label required">
+                                    Email Id <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    {{ form.email }}
+                                </div>
+                                {% if form.email.errors %}
+                                    <div class="error-text">{{ form.email.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.mobile.id_for_label }}" class="form-label required">
+                                    Mobile Number <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-mobile-alt input-icon"></i>
+                                    {{ form.mobile }}
+                                </div>
+                                {% if form.mobile.errors %}
+                                    <div class="error-text">{{ form.mobile.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.subscription_ref_no.id_for_label }}" class="form-label required">
+                                    Subscription Ref.Number as first time login) <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-receipt input-icon"></i>
+                                    {{ form.subscription_ref_no }}
+                                </div>
+                                <div class="form-text">{{ form.subscription_ref_no.help_text }}</div>
+                                {% if form.subscription_ref_no.errors %}
+                                    <div class="error-text">{{ form.subscription_ref_no.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- QR Code Payment -->
+                            <div class="qr-payment-box">
+                                <div class="qr-header">
+                                    <i class="fas fa-qrcode"></i> Scan to Pay
+                                </div>
+                                <img src="{% load static %}{% static 'images/qrpayment/southindianbank.jpg' %}" alt="Payment QR" class="qr-img">
+                                <div class="qr-footer">South Indian Bank</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.state.id_for_label }}" class="form-label required">
+                                    Select your State <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-map-marker-alt input-icon"></i>
+                                    {{ form.state }}
+                                </div>
+                                {% if form.state.errors %}
+                                    <div class="error-text">{{ form.state.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Section 3: Account Setup -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-key me-2"></i>Account Setup
+                            </h4>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.username.id_for_label }}" class="form-label required">
+                                    Create Username <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-user-circle input-icon"></i>
+                                    {{ form.username }}
+                                </div>
+                                <div class="form-text">Choose a unique username for your account</div>
+                                {% if form.username.errors %}
+                                    <div class="error-text">{{ form.username.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label required">
+                                    Create Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group password-group">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    {{ form.password1 }}
+                                    <i class="fas fa-eye password-toggle" id="togglePassword1"></i>
+                                </div>
+                                <div class="form-text">{{ form.password1.help_text }}</div>
+                                {% if form.password1.errors %}
+                                    <div class="error-text">{{ form.password1.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label required">
+                                    Confirm Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group password-group">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    {{ form.password2 }}
+                                    <i class="fas fa-eye password-toggle" id="togglePassword2"></i>
+                                </div>
+                                <div class="form-text">Re-enter your password to confirm</div>
+                                {% if form.password2.errors %}
+                                    <div class="error-text">{{ form.password2.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <button type="submit" class="btn-register">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>Already have an account?</span>
+                </div>
+                
+                <div class="login-link">
+                    <a href="{% url 'login' %}" class="btn-secondary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #167a9c 0%, #1768aa 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .register-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+            width: 95%;
+            max-width: 1400px;
+            display: flex;
+            flex-direction: column;
+            margin: 20px auto;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #4154a7 35%, #4ccbf5 65%);
+            padding: 35px 30px;
+            text-align: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .register-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .register-header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .register-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-sections-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .register-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .register-body::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .register-body::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+        }
+
+        .register-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.5);
+        }
+
+        .form-section {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        
+        .form-section:hover {
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            color: #495057;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-section .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            display: block;
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+
+        .form-label.required {
+            position: relative;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+            font-weight: 700;
+        }
+
+        .form-control, select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            background: white;
+        }
+
+        .form-control:focus, select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+            outline: none;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.1rem;
+            z-index: 10;
+        }
+
+        .form-control-with-icon {
+            padding-left: 50px;
+        }
+
+        .password-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #764ba2;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            width: 100%;
+            max-width: 300px;
+            margin: 25px auto 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 15px;
+            position: relative;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .login-link {
+            text-align: center;
+        }
+
+        .alert {
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .alert-danger {
+            background: #fee;
+            color: #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3a3;
+        }
+
+        .alert-warning {
+            background: #ffe;
+            color: #c93;
+        }
+
+        .alert-info {
+            background: #eef;
+            color: #39c;
+        }
+
+        .error-text {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .form-text {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        .brand-logo {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+
+        /* Service number validation styles */
+        .is-valid-input { 
+            border-color: #198754 !important; 
+            box-shadow: 0 0 0 0.2rem rgba(25,135,84,0.25); 
+        }
+        .is-invalid-input { 
+            border-color: #dc3545 !important; 
+            box-shadow: 0 0 0 0.2rem rgba(220,53,69,0.15); 
+        }
+
+        /* Progress indicator */
+        .form-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            padding: 0 20px;
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #667eea;
+            position: relative;
+        }
+
+        .progress-step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 30px;
+            height: 2px;
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-50%);
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        @media (max-width: 1200px) {
+            .form-sections-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-section:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .register-card {
+                width: 95%;
+                margin: 10px auto;
+            }
+            
+            .form-sections-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .form-section:last-child {
+                grid-column: 1;
+            }
+            
+            .register-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .register-body {
+                padding: 20px 15px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+
+            .progress-step {
+                width: 25px;
+                height: 25px;
+                font-size: 0.7rem;
+                margin: 0 5px;
+            }
+
+            .progress-step::after {
+                width: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-header {
+                padding: 25px 20px;
+            }
+
+            .register-body {
+                padding: 15px 10px;
+            }
+
+            .form-section {
+                padding: 15px;
+            }
+        }
+
+        /* QR Code Payment Box */
+        .qr-payment-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .qr-header {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .qr-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 8px;
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .qr-footer {
+            color: #495057;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+    </style>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Password visibility toggle for password1
+        document.getElementById('togglePassword1').addEventListener('click', function() {
+            const passwordField = document.getElementById('{{ form.password1.id_for_label }}');
+            const toggleIcon = this;
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Password visibility toggle for password2
+        document.getElementById('togglePassword2').addEventListener('click', function() {
+            const passwordField = document.getElementById('{{ form.password2.id_for_label }}');
+            const toggleIcon = this;
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Live validation for service number: digits-hyphen-letter (e.g., 12345-A)
+        document.addEventListener('DOMContentLoaded', function () {
+            var svc = document.getElementById('{{ form.service_number.id_for_label }}');
+            if (!svc) return;
+            
+            // Add form-control-with-icon class for proper icon spacing
+            svc.classList.add('form-control-with-icon');
+            
+            var pattern = /^\d+-[A-Za-z]$/;
+            
+            function validate() {
+                var v = svc.value.trim();
+                if (v === '') {
+                    svc.classList.remove('is-valid-input');
+                    svc.classList.remove('is-invalid-input');
+                    return;
+                }
+                if (pattern.test(v)) {
+                    svc.classList.add('is-valid-input');
+                    svc.classList.remove('is-invalid-input');
+                } else {
+                    svc.classList.remove('is-valid-input');
+                    svc.classList.add('is-invalid-input');
+                }
+            }
+            svc.addEventListener('input', validate);
+            svc.addEventListener('blur', validate);
+
+            // Add form-control-with-icon class to all form controls that have icons
+            const formControls = document.querySelectorAll('.input-group .form-control, .input-group select');
+            formControls.forEach(function(control) {
+                control.classList.add('form-control-with-icon');
+            });
+        });
+    </script>
+</body>
+</html>

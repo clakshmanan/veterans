@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: veteran-management
+    env: python
+    region: singapore
+    plan: starter
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn veteran_project.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: veteran-db
+          property: connectionString
+
+databases:
+  - name: veteran-db
+    databaseName: veteran_db
+    user: veteran_user
+    region: singapore
+    plan: starter

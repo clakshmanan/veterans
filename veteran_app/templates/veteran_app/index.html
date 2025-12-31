@@ -1,0 +1,1277 @@
+
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Coast Guard Carousel -->
+<div class="container-fluid px-0">
+    <div id="coastGuardCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#coastGuardCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#coastGuardCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#coastGuardCarousel" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#coastGuardCarousel" data-bs-slide-to="3"></button>
+        <button type="button" data-bs-target="#coastGuardCarousel" data-bs-slide-to="4"></button>
+    </div>
+    <div class="carousel-inner">
+        <!-- Slide 1: Welcome -->
+        <div class="carousel-item active">
+            <div class="carousel-slide bg-gradient-primary">
+                <div class="carousel-content">
+                    <div class="carousel-logo-section mb-4">
+                        <img src="{% static 'images/veterans/favicon.ico.jpeg' %}" alt="ICGVWA Logo" class="carousel-logo">
+                    </div>
+                    <p>Dedicated to serving those who served the nation. Our association provides comprehensive welfare services, support, and community for Coast Guard veterans across India.</p>
+                    <div class="mt-4 carousel-buttons">
+                        {% if user.is_authenticated and user.is_superuser %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg me-3 mb-2">
+                                <i class="fas fa-chart-line me-2"></i>View Dashboard
+                            </a>
+                        {% elif user.is_authenticated and user.state_profile.approved %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg me-3 mb-2">
+                                <i class="fas fa-chart-line me-2"></i>View Dashboard
+                            </a>
+                        {% elif user.is_authenticated and user.veteran_profile.approved %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg me-3 mb-2">
+                                <i class="fas fa-chart-line me-2"></i>View Dashboard
+                            </a>
+                        {% else %}
+                            <button class="btn btn-light btn-lg me-3 mb-2 restricted-btn" onclick="showAuthAlert('Dashboard', 'registered and approved member')">
+                                <i class="fas fa-chart-line me-2"></i>View Dashboard
+                                <i class="fas fa-lock ms-2 text-warning"></i>
+                            </button>
+                        {% endif %}
+                        
+                        {% if user.is_authenticated and user.is_superuser %}
+                            <a href="{% url 'services' %}" class="btn btn-light btn-lg mb-2">
+                                <i class="fas fa-cogs me-2"></i>Our Services
+                            </a>
+                        {% elif user.is_authenticated and user.state_profile.approved %}
+                            <a href="{% url 'services' %}" class="btn btn-light btn-lg mb-2">
+                                <i class="fas fa-cogs me-2"></i>Our Services
+                            </a>
+                        {% else %}
+                            <button class="btn btn-light btn-lg mb-2 restricted-btn" onclick="showAuthAlert('Services', 'registered and approved member')">
+                                <i class="fas fa-cogs me-2"></i>Our Services
+                                <i class="fas fa-lock ms-2 text-warning"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Split Layout - Image Left, Content Right -->
+        <div class="carousel-item">
+            <div class="carousel-slide bg-gradient-success">
+                <div class="row h-100 align-items-center">
+                    <div class="col-md-6 p-0">
+                        <div class="carousel-image" style="background: url('{% static 'images/carousel/slide1.jpg' %}') center/cover; height: 100%; min-height: 400px;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="carousel-content">
+                            <h2><i class="fas fa-hands-helping me-3"></i>Icgvwa-President's Message</h2>
+                             <p class="lead">My Dear Veterans....</p>
+                            <p class="lead">ICGVWA Web Application provide comprehensive Support for Our Heroes</p>
+                            <p>Medical assistance, pension guidance, welfare schemes, and employment opportunities for Coast Guard veterans and their families.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Split Layout - Content Left, Image Right -->
+        <div class="carousel-item">
+            <div class="carousel-slide bg-gradient-info">
+                <div class="row h-100 align-items-center">
+                    <div class="col-md-6">
+                        <div class="carousel-content">
+                            <h2><i class="fas fa-users me-3"></i>Strong Community</h2>
+                            <p class="lead">United We Stand, Together We Serve</p>
+                            <p>Building lasting bonds among Coast Guard veterans, fostering camaraderie, and creating a supportive network nationwide.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 p-0">
+                        <div class="carousel-image" style="background: url('{% static 'images/carousel/slide2.jpg' %}') center/cover; height: 100%; min-height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Slide 2: Split Layout - Content Left, Image Right -->
+        <div class="carousel-item">
+            <div class="carousel-slide bg-gradient-info">
+                <div class="row h-100 align-items-center">
+                    <div class="col-md-6">
+                        <div class="carousel-content">
+                            <h2><i class="fas fa-users me-3"></i>State Chapters</h2>
+                            <p class="lead">United We Stand, Together We Serve</p>
+                            <p>Building lasting bonds among Coast Guard veterans, fostering camaraderie, and creating a supportive network nationwide.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 p-0">
+                        <div class="carousel-image" style="background: url('{% static 'images/carousel/slide8.jpg' %}') center/cover; height: 100%; min-height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Split Layout - Image Left, Benefits Right -->
+        <div class="carousel-item">
+            <div class="carousel-slide bg-gradient-warning">
+                <div class="row h-100 align-items-center">
+                    <div class="col-md-6 p-0">
+                        <div class="carousel-image" style="background: url('{% static 'images/carousel/slide3.jpg' %}') center/cover; height: 100%; min-height: 400px;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="carousel-content">
+                            <h2><i class="fas fa-star me-3"></i>Member Benefits</h2>
+                            <p class="lead">Exclusive Privileges & Services</p>
+                            <p>Access to healthcare facilities, educational scholarships, financial assistance, and special discounts for veterans and families.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#coastGuardCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#coastGuardCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<div class="container-fluid">
+    
+    <!-- Post Announcement Section (State Admins & Superadmin) -->
+    {% if user.is_superuser or user.state_profile %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Post New Announcement</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'post_announcement' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Title</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Type</label>
+                                <select name="notification_type" class="form-select">
+                                    <option value="info">General_Info</option>
+                                    <option value="warning">Policy_Info</option>
+                                    <option value="success">Celebration_Info</option>
+                                    <option value="urgent">Obituary_Info</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea name="message" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" name="expiry_date" class="form-control" required>
+                            <small class="text-muted">Message will stop displaying after this date</small>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-1"></i>Post Announcement
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+</div>
+
+<!-- Footer Section -->
+<footer class="icgvwa-footer mt-5">
+    <div class="footer-main">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Association Address -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">
+                            <i class="fas fa-anchor me-2"></i>Association Address
+                        </h5>
+                        <div class="footer-content">
+                            <div class="address-item">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                <div>
+                                    <strong>Indian Coast Guard Veteran Welfare Association</strong><br>
+                                    <span>No. 37, 28th Cross Street</span><br>
+                                    <span>Indira Nagar, Adayar</span><br>
+                                    <span>Tamilnadu - 600020, India</span>
+                                </div>
+                            </div>
+                            <div class="address-item">
+                                <i class="fas fa-phone me-2"></i>
+                                <div>
+                                    <span>+91-9445908766</span><br>
+                                    <span>+91-9080675055</span>
+                                </div>
+                            </div>
+                            <div class="address-item">
+                                <i class="fas fa-envelope me-2"></i>
+                                <div>
+                                     <span>president@icveteran.in</span><br>
+                                    <span>admin@icveteran.in</span><br>
+                                    <span>info@icveteran.in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">
+                            <i class="fas fa-share-alt me-2"></i>Connect With Us
+                        </h5>
+                        <div class="footer-content">
+                            <div class="social-links">
+                                <a href="#" class="social-link facebook" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                    <span>Reserved</span>
+                                </a>
+                                <a href="#" class="social-link twitter" title="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                    <span>Reserved</span>
+                                </a>
+                                <a href="#" class="social-link instagram" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>Reserved</span>
+                                </a>
+                                <a href="#" class="social-link linkedin" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                    <span>Reserved</span>
+                                </a>
+                                <a href="https://www.youtube.com/@aicgvwachannel4235" class="social-link youtube" title="YouTube" target="_blank" rel="noopener noreferrer">
+                                    <i class="fab fa-youtube"></i>
+                                    <span>YouTube</span>
+                                </a>
+                                <a href="#" class="social-link telegram" title="Telegram">
+                                    <i class="fab fa-telegram-plane"></i>
+                                    <span>Telegram</span>
+                                </a>
+                            </div>
+                            <!-- div class="newsletter-signup mt-3">
+                                <h6><i class="fas fa-bell me-2"></i>Stay Updated</h6>
+                                <div class="input-group">
+                                    <input type="email" class="form-control" placeholder="Your email address">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Useful Links -->
+                <div class="col-lg-4 col-md-12 mb-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">
+                            <i class="fas fa-link me-2"></i>Useful Links
+                        </h5>
+                        <div class="footer-content">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="useful-links">
+
+                                        <a href="https://buvik.gov.in/" class="useful-link" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-info-circle me-2"></i>Buvik
+                                        </a>
+
+                                         <a href="https://www.echs.gov.in/" class="useful-link" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-home me-2"></i>ECHS
+                                        </a>
+
+                                         <a href="https://afd.csdindia.gov.in" class="useful-link" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-home me-2"></i>CSD_Login
+                                        </a>
+
+                                        <a href="https://sparsh.defencepension.gov.in/?page=initiateFamilyPension/" class="useful-link" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-home me-2"></i>Sparsh_Login
+                                        </a>
+
+
+                                       
+                                        
+                                        <a href="https://jeevanpramaan.gov.in/v1.0/ppouser/login/" class="useful-link"target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-home me-2"></i>JeevanPramaan
+                                        </a>
+
+
+                                        <a href="{% url 'services' %}" class="useful-link">
+                                            <i class="fas fa-cogs me-2"></i>Services
+                                        </a>
+                                       
+                                        
+
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="useful-links">
+                                        <a href="#careers-link" class="useful-link" data-url="">
+                                            <i class="fas fa-briefcase me-2"></i>Careers
+                                        </a>
+
+                                        <a href="#news-link" class="useful-link" data-url="">
+                                            <i class="fas fa-newspaper me-2"></i>News & Updates
+                                        </a>
+
+                                         <a href="#welfare-link" class="useful-link" data-url="">
+                                            <i class="fas fa-heart me-2"></i>Welfare Programs
+                                        </a>
+
+                                        <a href="#privacy-link" class="useful-link" data-url="">
+                                            <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+                                        </a>
+                                        <a href="#terms-link" class="useful-link" data-url="">
+                                            <i class="fas fa-file-contract me-2"></i>Terms & Conditions
+                                        </a>
+                                        <a href="#" class="useful-link">
+                                            <i class="fas fa-life-ring me-2"></i>Support
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        <strong>2025 Indian Coast Guard Veteran Welfare Association</strong>
+                    </p>
+                    <p class="mb-0 small">
+                       => All rights reserved under Triwon Technologies Services.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="footer-badges">
+                        <span class="badge bg-primary me-2">
+                            <i class="fas fa-users me-1"></i>{{ total_members|default:"400+" }} Members
+                        </span>
+                        <span class="badge bg-success me-2">
+                            <i class="fas fa-map me-1"></i>{{ states_covered|default:"28" }} States
+                        </span>
+                        <span class="badge bg-info">
+                            <i class="fas fa-award me-1"></i>Since 2018
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* Browser Compatibility and Viewport Optimization */
+* {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#coastGuardCarousel {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+}
+
+.carousel-slide {
+    height: 80vh;
+    max-height: 500px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    margin: 0;
+}
+
+.carousel-image {
+    border-radius: 0;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
+}
+
+.carousel-slide .row {
+    width: 100%;
+    margin: 0;
+}
+
+.carousel-slide .col-md-6 {
+    padding: 0 20px;
+}
+
+.carousel-slide .col-md-6.p-0 {
+    padding: 0;
+}
+
+.carousel-content {
+    text-align: center;
+    color: #ffffff;
+    padding: 15px;
+    max-width: 95%;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    font-weight: 500;
+}
+
+.carousel-content h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.3rem);
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    line-height: 1.2;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.carousel-content .lead {
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    margin-bottom: 12px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    line-height: 1.3;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.carousel-subtitle {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 1.6rem !important;
+    text-shadow: 3px 3px 8px rgba(0,0,0,0.9) !important;
+    background: rgba(15, 26, 54, 0.8);
+    padding: 12px 24px;
+    border-radius: 30px;
+    display: inline-block;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.carousel-content p {
+    font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    margin-bottom: 15px;
+    line-height: 1.5;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.carousel-logo-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.carousel-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.carousel-buttons .btn {
+    white-space: nowrap;
+    min-width: 140px;
+    font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+    padding: 8px 16px;
+}
+
+.carousel-logo {
+    width: min(200px, 22vw);
+    height: min(200px, 22vw);
+    max-width: 200px;
+    max-height: 200px;
+    min-width: 120px;
+    min-height: 120px;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+    object-fit: cover;
+    transition: all 0.3s ease;
+    animation: logoGlow 3s ease-in-out infinite alternate;
+}
+
+.carousel-logo:hover {
+    transform: scale(1.1) rotate(5deg);
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes logoGlow {
+    from {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 35px rgba(255, 255, 255, 0.3);
+    }
+    to {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 255, 255, 0.5);
+    }
+}
+
+.carousel-metrics {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.carousel-metrics h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.carousel-metrics small {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.image-placeholder {
+    position: relative;
+}
+
+.image-overlay-text {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+}
+
+.image-overlay-text .fa-image {
+    opacity: 0.3;
+}
+
+.image-overlay-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0f1a36 0%, #1a2b52 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #0f1a36 0%, #2a3f6b 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #1a2b52 0%, #0f1a36 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #2a3f6b 0%, #0f1a36 100%);
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #0f1a36 0%, #1a2b52 100%);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+.carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.restricted-btn {
+    opacity: 0.8;
+    cursor: not-allowed;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.restricted-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.restricted-btn .text-warning {
+    font-size: 0.9rem;
+    animation: lockPulse 2s infinite;
+}
+
+@keyframes lockPulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Large screens optimization */
+@media (min-width: 1400px) {
+    .carousel-slide {
+        max-height: 550px;
+    }
+    
+    .carousel-content {
+        max-width: 1000px;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 1199px) {
+    .carousel-slide {
+        max-height: 480px;
+    }
+    
+    .carousel-content {
+        max-width: 95%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-slide {
+        height: 75vh;
+        max-height: 420px;
+        min-height: 350px;
+        margin: 0 4px;
+    }
+    
+    .carousel-slide .row {
+        flex-direction: column;
+    }
+    
+    .carousel-image {
+        min-height: 200px !important;
+    }
+    
+    .carousel-slide .col-md-6 {
+        padding: 10px;
+    }
+    
+    .carousel-content {
+        padding: 15px 12px;
+        max-width: 95%;
+    }
+    
+    .carousel-content h2 {
+        font-size: 2.2rem;
+    }
+    
+    .carousel-content .lead {
+        font-size: 1.2rem;
+    }
+    
+    .carousel-subtitle {
+        font-size: 1.3rem !important;
+        padding: 8px 16px !important;
+        border-width: 2px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .carousel-content p {
+        font-size: 1rem;
+    }
+    
+    .carousel-metrics h3 {
+        font-size: 2rem;
+    }
+    
+
+    
+    .image-overlay-text {
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+    }
+    
+    .image-overlay-text .fa-image {
+        font-size: 3rem !important;
+    }
+    
+    .carousel-logo {
+        width: min(180px, 35vw) !important;
+        height: min(180px, 35vw) !important;
+        border-width: 5px !important;
+        min-width: 120px !important;
+        min-height: 120px !important;
+    }
+    
+    .carousel-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .carousel-buttons .btn {
+        width: 100%;
+        max-width: 280px;
+        margin: 5px 0 !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-slide {
+        height: 70vh;
+        max-height: 380px;
+        min-height: 320px;
+    }
+    
+    .carousel-content h2 {
+        font-size: 1.8rem;
+    }
+    
+    .carousel-content .lead {
+        font-size: 1.1rem;
+    }
+    
+    .carousel-subtitle {
+        font-size: 1.1rem !important;
+        padding: 6px 12px !important;
+        margin-bottom: 10px !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .carousel-metrics {
+        padding: 15px;
+    }
+    
+    .carousel-metrics h3 {
+        font-size: 1.5rem;
+    }
+    
+    .carousel-logo {
+        width: 140px;
+        height: 140px;
+        border-width: 5px;
+    }
+    
+    .carousel-logo-section {
+        margin-bottom: 20px;
+    }
+}
+
+/* Footer Styles */
+.icgvwa-footer {
+    background: linear-gradient(135deg, #0f1a36 0%, #1a2b52 50%, #2a3f6b 100%);
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+}
+
+.icgvwa-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+    animation: footerShimmer 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes footerShimmer {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+}
+
+.footer-main {
+    padding: 40px 0 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.footer-section {
+    height: 100%;
+}
+
+.footer-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+    position: relative;
+    padding-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border-radius: 2px;
+}
+
+.footer-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Address Section */
+.address-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    min-height: 60px;
+}
+
+.address-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.address-item i {
+    color: #fbbf24;
+    font-size: 1.2rem;
+    margin-top: 2px;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.address-item div {
+    flex: 1;
+}
+
+.address-item strong {
+    color: #ffffff;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.address-item span {
+    color: #ffffff;
+    display: block;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+/* Social Media Links */
+.social-links {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.social-link:hover {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.social-link.facebook:hover {
+    background: linear-gradient(135deg, #3b5998 0%, #8b9dc3 100%);
+    border-color: #3b5998;
+}
+
+.social-link.twitter:hover {
+    background: linear-gradient(135deg, #1da1f2 0%, #0d8bd7 100%);
+    border-color: #1da1f2;
+}
+
+.social-link.instagram:hover {
+    background: linear-gradient(135deg, #e4405f 0%, #fd1d1d 50%, #fcb045 100%);
+    border-color: #e4405f;
+}
+
+.social-link.linkedin:hover {
+    background: linear-gradient(135deg, #0077b5 0%, #00a0dc 100%);
+    border-color: #0077b5;
+}
+
+.social-link.youtube:hover {
+    background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+    border-color: #ff0000;
+}
+
+.social-link.telegram:hover {
+    background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
+    border-color: #0088cc;
+}
+
+.social-link i {
+    font-size: 1.2rem;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.social-link span {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Newsletter Signup */
+.newsletter-signup h6 {
+    color: #fbbf24;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.newsletter-signup .input-group {
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.newsletter-signup .form-control {
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.newsletter-signup .form-control:focus {
+    background: #ffffff;
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.newsletter-signup .btn {
+    border: none;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0 20px;
+}
+
+.newsletter-signup .btn:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    transform: scale(1.05);
+}
+
+/* Useful Links */
+.useful-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.useful-link {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.useful-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+    text-decoration: none;
+}
+
+.useful-link i {
+    color: #fbbf24;
+    width: 18px;
+    font-size: 0.9rem;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.footer-bottom p {
+    color: #ffffff;
+    margin-bottom: 5px;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.footer-bottom .small {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.footer-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.footer-badges .badge {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.footer-badges .badge.bg-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+}
+
+.footer-badges .badge.bg-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+.footer-badges .badge.bg-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer-main {
+        padding: 30px 0 20px;
+    }
+    
+    .footer-title {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+    
+    .social-links {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .useful-links {
+        gap: 6px;
+    }
+    
+    .footer-badges {
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .footer-badges .badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .address-item {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .newsletter-signup .input-group {
+        flex-direction: column;
+        border-radius: 10px;
+    }
+    
+    .newsletter-signup .form-control {
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 0;
+    }
+    
+    .newsletter-signup .btn {
+        border-radius: 0 0 10px 10px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-main {
+        padding: 30px 0 20px;
+    }
+    
+    .social-link {
+        padding: 10px 12px;
+    }
+    
+    .social-link span {
+        font-size: 0.85rem;
+    }
+    
+    .useful-link {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+    
+    .address-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .address-item i {
+        margin-bottom: 8px;
+        font-size: 1.5rem;
+    }
+}
+
+</style>
+
+<script>
+function showAuthAlert(featureName, requiredRole) {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-lock me-2"></i>Authorization Required
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-warning"></i>
+                    </div>
+                    <h6>Access to <strong>${featureName}</strong> is restricted</h6>
+                    <p class="text-muted">This feature requires <strong>${requiredRole}</strong> privileges.</p>
+                    {% if not user.is_authenticated %}
+                    <p class="text-info">Please Subscribe, register and get approved to access.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Steps to access:</strong><br>
+                        1. Subscribe as a veteran<br>
+                        2. Register & Wait for admin approval<br>
+                        3. Login to access features
+                    </div>
+                    {% else %}
+                    <p class="text-info">Your account needs approval from the administrator.</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock me-2"></i>
+                        Your registration is pending approval. Please contact your state administrator.
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer justify-content-center">
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'veteran_register' %}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-1"></i>Register Now
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-success">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    {% endif %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+    
+    modal.addEventListener('hidden.bs.modal', function () {
+        document.body.removeChild(modal);
+    });
+}
+
+// Add click effects to restricted buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const restrictedBtns = document.querySelectorAll('.restricted-btn');
+    restrictedBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Add ripple effect
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+        });
+    });
+});
+</script>
+{% endblock %}

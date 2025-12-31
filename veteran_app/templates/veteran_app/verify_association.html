@@ -1,0 +1,47 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><i class="fas fa-shield-check me-2"></i>Association Number Verification</h3>
+                    <p class="mb-0">Verify ICGVWA Member Identity</p>
+                </div>
+                <div class="card-body">
+                    {% if veteran %}
+                        <!-- Verification Success -->
+                        <div class="alert alert-success text-center">
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
+                            <h4>✅ VERIFIED MEMBER</h4>
+                            <p class="mb-0">This is a valid ICGVWA member</p>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="member-info">
+                                    <h5>Member Information</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Association Number:</strong></td>
+                                            <td>{{ veteran.association_number }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Name:</strong></td>
+                                            <td>{{ veteran.name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Rank:</strong></td>
+                                            <td>{{ veteran.rank.name }} (Retd.)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>State Chapter:</strong></td>
+                                            <td>{{ veteran.state.name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Member Since:</strong></td>
+                                            <td>{{ veteran.association_date|date:\"F Y\" }}</td>
+                                        </tr>
+                                    </table>\n                                </div>\n                            </div>\n                            <div class=\"col-md-6\">\n                                <div class=\"validity-info\">\n                                    <h5>Validity Status</h5>\n                                    {% if veteran.is_id_card_valid %}\n                                        <div class=\"alert alert-success\">\n                                            <i class=\"fas fa-check me-2\"></i>ID Card Valid\n                                            <br><small>Valid until: {{ veteran.get_renewal_due_date|date:\"F d, Y\" }}</small>\n                                        </div>\n                                    {% else %}\n                                        <div class=\"alert alert-warning\">\n                                            <i class=\"fas fa-exclamation-triangle me-2\"></i>ID Card Expired\n                                            <br><small>Expired on: {{ veteran.get_renewal_due_date|date:\"F d, Y\" }}</small>\n                                        </div>\n                                    {% endif %}\n                                    \n                                    <div class=\"membership-status\">\n                                        {% if veteran.membership %}\n                                            <span class=\"badge bg-success fs-6\">\n                                                <i class=\"fas fa-star me-1\"></i>Active Member\n                                            </span>\n                                        {% else %}\n                                            <span class=\"badge bg-secondary fs-6\">\n                                                <i class=\"fas fa-pause me-1\"></i>Inactive Member\n                                            </span>\n                                        {% endif %}\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                        \n                    {% elif association_number %}\n                        <!-- Verification Failed -->\n                        <div class=\"alert alert-danger text-center\">\n                            <i class=\"fas fa-times-circle fa-3x mb-3\"></i>\n                            <h4>❌ INVALID NUMBER</h4>\n                            <p class=\"mb-0\">Association number \"{{ association_number }}\" not found or member not approved</p>\n                        </div>\n                        \n                    {% else %}\n                        <!-- Verification Form -->\n                        <div class=\"text-center mb-4\">\n                            <i class=\"fas fa-search fa-3x text-primary mb-3\"></i>\n                            <h4>Verify Association Number</h4>\n                            <p class=\"text-muted\">Enter the association number to verify member identity</p>\n                        </div>\n                        \n                        <form method=\"get\" class=\"row g-3 justify-content-center\">\n                            <div class=\"col-md-6\">\n                                <div class=\"input-group\">\n                                    <span class=\"input-group-text\"><i class=\"fas fa-id-card\"></i></span>\n                                    <input type=\"text\" class=\"form-control\" name=\"number\" \n                                           placeholder=\"ICGVWA/XX/00001\" required\n                                           pattern=\"ICGVWA/[A-Z]{2,3}/[0-9]{5}\"\n                                           title=\"Format: ICGVWA/STATE/00001\">\n                                    <button class=\"btn btn-primary\" type=\"submit\">\n                                        <i class=\"fas fa-search me-1\"></i>Verify\n                                    </button>\n                                </div>\n                                <div class=\"form-text\">Format: ICGVWA/STATE_CODE/00001</div>\n                            </div>\n                        </form>\n                    {% endif %}\n                    \n                    <!-- Additional Information -->\n                    <div class=\"row mt-4\">\n                        <div class=\"col-12\">\n                            <div class=\"card bg-light\">\n                                <div class=\"card-body\">\n                                    <h6><i class=\"fas fa-info-circle me-2\"></i>About ICGVWA</h6>\n                                    <p class=\"small mb-0\">\n                                        The Indian Coast Guard Veterans Welfare Association (ICGVWA) is dedicated to \n                                        supporting the welfare of Coast Guard veterans and their families across India.\n                                        This verification system helps confirm the authenticity of member identity cards.\n                                    </p>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n\n<script>\n// Auto-format association number input\ndocument.addEventListener('DOMContentLoaded', function() {\n    const input = document.querySelector('input[name=\"number\"]');\n    if (input) {\n        input.addEventListener('input', function(e) {\n            let value = e.target.value.toUpperCase();\n            // Auto-format as user types\n            if (value.length > 0 && !value.startsWith('ICGVWA/')) {\n                value = 'ICGVWA/' + value;\n            }\n            e.target.value = value;\n        });\n    }\n});\n</script>\n{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block title %}{% if editing_profile %}Edit{% else %}Add{% endif %} Matrimonial Profile - ICGVWA{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-heart"></i> {% if editing_profile %}Edit{% else %}Add{% endif %} Matrimonial Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Child (Select from dropdown)</label>
+                                {{ form.child }}
+                                <small class="text-muted d-block">Select if child is registered</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Child Name (Enter manually)</label>
+                                {{ form.child_name }}
+                                <small class="text-muted d-block">Or enter child name directly</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Gender</label>
+                                {{ form.gender }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Profile Photo</label>
+                                {{ form.photo }}
+                                {% if editing_profile and editing_profile.photo %}
+                                <div class="mt-2">
+                                    <small class="text-muted">Current photo:</small><br>
+                                    <img src="{{ editing_profile.photo.url }}" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Height</label>
+                                {{ form.height }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Religion</label>
+                                {{ form.religion }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Caste</label>
+                                {{ form.caste }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Occupation</label>
+                                {{ form.occupation }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Annual Income</label>
+                                {{ form.annual_income }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contact Person</label>
+                                {{ form.contact_person }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">About</label>
+                            {{ form.about }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Partner Expectations</label>
+                            {{ form.expectations }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Contact Number</label>
+                            {{ form.contact_number }}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'matrimonial_portal' %}" class="btn btn-primary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-danger">{% if editing_profile %}Update Profile{% else %}Add Profile{% endif %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

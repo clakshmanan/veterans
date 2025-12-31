@@ -1,0 +1,46 @@
+
+<div class="col-md-4 mb-3">
+    <div class="card metric-card bg-primary text-white">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 class="card-title">Total Members</h5>
+                    <h2 class="card-text">{{ total_members|default:"0" }}</h2>
+                </div>
+                <div>
+                    <i class="fas fa-users fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-4 mb-3">
+    <div class="card metric-card bg-success text-white">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 class="card-title">Subscribed Members</h5>
+                    <h2 class="card-text">{{ active_members|default:"0" }}</h2>
+                </div>
+                <div>
+                    <i class="fas fa-user-check fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-4 mb-3">
+    <div class="card metric-card bg-info text-white">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 class="card-title">Icgvwa-States</h5>
+                    <h2 class="card-text">{{ states_covered|default:"0" }}</h2>
+                </div>
+                <div>
+                    <i class="fas fa-map-marked fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

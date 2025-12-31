@@ -1,0 +1,155 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <div class="mb-3">
+                        <img src="{% static 'images/veterans/11_bharathan.jpg' %}" 
+                             alt="President" 
+                             class="president-photo rounded-circle shadow-lg"
+                             style="width: 120px; height: 120px; object-fit: cover; object-position: center 20%; border: 5px solid white;">
+                    </div>
+                    <h3 class="mb-1 text-white">President's Message</h3>
+                    <h5 class="mb-0 text-white-50">Dear Veteran / Family Pensioner / Honorary Member</h5>
+                </div>
+                
+                <div class="card-body p-5">
+                    <div class="alert alert-danger text-center mb-4">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <h5> Warm Welcome to onboard ICGVWA</h5>
+                        <p class="mb-0">Your registration is under review by the state administrator.</p>
+                    </div>
+                    
+                    <h4 class="text-primary mb-4">
+                        <i class="fas fa-book me-2"></i> Please read our ICGVWA webapp Guidelines
+                    </h4>
+                    
+
+                     <div class="regulations-content">
+                    
+                     <div class="mb-4">
+                            <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>
+                            Important Notes</h6>
+                            <ul class="list-unstyled ms-4">
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Complete your profile after approval</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Include subscription details in your profile</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Verify all documents and information</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Contact state admin for urgent matters</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Platform access granted only after Subscription & Verification</li>
+                            </ul>
+                    </div>
+
+                    <div class="mb-4">
+                            <h6 class="text-primary"><i class="fas fa-users me-2"></i>Code of Conduct</h6>
+                            <ul class="list-unstyled ms-4">
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Maintain dignity and honor of Coast Guard service</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Respect fellow veterans and their families</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Use this platform ethically </li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Report any misuse or inappropriate behavior</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Keep personal information updated and accurate</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Reset your password and setup Two-Factor Authentication</li>
+                            </ul>
+                    </div>
+
+                    
+                     <div class="mb-4">
+                            <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Membership Benefits</h6>
+                            <ul class="list-unstyled ms-4">
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Access to veteran welfare schemes</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Job portal for employment opportunities</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Matrimonial services for families</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Inter-state veteran networking</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Mutual Medical assistance</li>
+                            </ul>
+                    </div>
+
+
+
+
+                     <div class="mb-4">
+                            <h6 class="text-info"><i class="fas fa-users me-2"></i>Digital Transformation</h6>
+                            <ul class="list-unstyled ms-4">
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>ICGVWA transforming veterans through tehnology</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Our IT_Wing keep updating the platform</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Without second thought please approach us for any help</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Help IT_Wing to deliver the best by providing your support</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>ICGVWA keep working to streamline veteran's digital move </li>
+                            </ul>
+                        </div>
+
+                    
+                        
+                        
+                        <div class="text-center mt-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Next Steps:</strong> Your state admin will review your registration and approve your account. 
+                                You will receive access to all platform features once approved.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        <i class="fas fa-phone me-1"></i>For assistance, email to=> it_wing@icgveteran.in
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-primary {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.regulations-content h6 {
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.regulations-content ul li {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.president-photo {
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.president-photo:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %}

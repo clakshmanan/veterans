@@ -1,0 +1,28 @@
+# Copy these commands one by one in Django shell (python manage.py shell)
+
+from django.contrib.auth.models import User
+from django.db import connection
+
+# Step 1: Create table
+cursor = connection.cursor()
+cursor.execute("""
+CREATE TABLE veteran_app_accountsuser (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL UNIQUE REFERENCES auth_user(id),
+    approved BOOLEAN DEFAULT TRUE,
+    full_name VARCHAR(200) DEFAULT '',
+    designation VARCHAR(100) DEFAULT 'Accounts Manager',
+    contact_number VARCHAR(15) DEFAULT '',
+    email VARCHAR(254) DEFAULT '',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+""")
+
+# Step 2: Create user
+user = User.objects.create_user(username='accounts', password='accounts123', email='accounts@icgvwa.org', first_name='Accounts', last_name='Manager')
+
+# Step 3: Create profile
+cursor.execute("INSERT INTO veteran_app_accountsuser (user_id, approved, full_name, designation, email) VALUES (%s, %s, %s, %s, %s)", [user.id, True, 'Accounts Manager', 'Treasurer', 'accounts@icgvwa.org'])
+
+print("Success! Login: accounts / accounts123")

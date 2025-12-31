@@ -1,0 +1,31 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-4">
+                    <div>
+                        <h3 class="mb-1">
+                            <i class="fas fa-user-edit me-2"></i>Edit Veteran Profile
+                        </h3>
+                        <p class="mb-0 opacity-75">{{ veteran.name }} &middot; {{ veteran.state.name }}</p>
+                    </div>
+                    <a href="{% url 'veteran_dashboard' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+
+                <div class="card-body p-5">
+                    {% url 'veteran_dashboard' as veteran_dashboard_url %}
+                    {% include 'veteran_app/includes/veteran_member_form.html' with form=form cancel_url=veteran_dashboard_url cancel_label='Cancel' submit_label='Save Profile' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

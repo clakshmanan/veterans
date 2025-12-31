@@ -1,0 +1,43 @@
+RANKS
+Director General
+Deputy Director General
+Additional Director General
+Joint Director
+Inspector General
+Deputy Inspector General
+Commandant
+Commandant(JG)
+Dy Commandant
+Assistant Commandant
+Pradhar Adhikari
+Uttham Adhikari
+Pradhar Sahayak Engineer
+Uttham Sayahak Engineer
+Adhikari
+Sahayak Engineer
+Pradhan Navik
+Uttham Yantrik
+Yantrik
+Uttham Navik
+Navik
+Enrolled Follower
+Civilian Staff
+Others
+
+GROUPS
+Gunnery
+Radar Platoon
+Store Assistant
+Marine Engineering
+Clearance Diver
+Air Crew Diver
+Safety Equipments
+Photography
+Air Engineering
+Air Electrical
+Air Radio
+
+PERSONNEL_NUMBERS
+02863-M
+01457-P
+21456-F

@@ -1,0 +1,94 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block title %}Matrimonial Portal - ICGVWA{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-heart text-danger"></i> Matrimonial Portal
+                    {% if user.is_superuser %}<small class="text-muted">(Admin View)</small>{% endif %}
+                    </h2>
+                    <p class="text-muted mb-0">Find life partners for veteran families</p>
+                </div>
+                <div>
+                    {% if user.veteran_profile %}
+                    <a href="{% url 'matrimonial_add' %}" class="btn btn-danger me-2">
+                        <i class="fas fa-plus-circle"></i> Add Profile
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'veteran_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for profile in profiles %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 hover-lift">
+                {% if profile.photo %}
+                <img src="{{ profile.photo.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-circle text-danger"></i> {{ profile.child.child_name }}
+                    </h5>
+                    <p class="card-text">
+                        <strong><i class="fas fa-birthday-cake"></i> Age:</strong> {{ profile.child.get_age }} years<br>
+                        <strong><i class="fas fa-venus-mars"></i> Gender:</strong> {{ profile.get_gender_display }}<br>
+                        {% if profile.height %}
+                        <strong><i class="fas fa-ruler-vertical"></i> Height:</strong> {{ profile.height }}<br>
+                        {% endif %}
+                        {% if profile.occupation %}
+                        <strong><i class="fas fa-briefcase"></i> Occupation:</strong> {{ profile.occupation }}<br>
+                        {% endif %}
+                        {% if profile.religion %}
+                        <strong><i class="fas fa-pray"></i> Religion:</strong> {{ profile.religion }}<br>
+                        {% endif %}
+                    </p>
+                    {% if profile.about %}
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> {{ profile.about|truncatewords:20 }}
+                        </small>
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ profile.veteran.state.name }}
+                        </small>
+                        <div>
+                            {% if user.veteran_profile and profile.veteran == user.veteran_profile.veteran_member %}
+                            <a href="{% url 'matrimonial_edit' profile.id %}" class="btn btn-sm btn-outline-primary me-1" title="Edit Profile">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'matrimonial_delete' profile.id %}" class="btn btn-sm btn-outline-danger" 
+                               onclick="return confirm('Are you sure you want to delete this matrimonial profile?')" title="Delete Profile">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                            <small class="text-muted ms-2">
+                                <i class="fas fa-calendar"></i> {{ profile.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No matrimonial profiles found. Be the first to add a profile!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

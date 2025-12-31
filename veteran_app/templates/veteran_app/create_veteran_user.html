@@ -1,0 +1,122 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h3 class="mb-1">
+                        <i class="fas fa-user-plus me-2"></i>Create Veteran User Account
+                    </h3>
+                    <p class="mb-0 opacity-75">{{ state.name }} State</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.veteran }}
+                                <label for="{{ form.veteran.id_for_label }}">
+                                    <i class="fas fa-user me-1"></i>Select Veteran
+                                </label>
+                                <div class="form-text">{{ form.veteran.help_text }}</div>
+                                {% if form.veteran.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.veteran.errors|striptags }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.username }}
+                                <label for="{{ form.username.id_for_label }}">
+                                    <i class="fas fa-at me-1"></i>Username
+                                </label>
+                                {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.username.errors|striptags }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.password }}
+                                <label for="{{ form.password.id_for_label }}">
+                                    <i class="fas fa-lock me-1"></i>Temporary Password
+                                </label>
+                                <div class="form-text">{{ form.password.help_text }}</div>
+                                {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.password.errors|striptags }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-end gap-3">
+                            <a href="{% url 'manage_veteran_users' state.id %}" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-save me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.form-floating > .form-control, .form-floating > .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-floating > .form-control:focus, .form-floating > .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+</style>
+{% endblock %}

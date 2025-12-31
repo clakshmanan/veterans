@@ -1,0 +1,202 @@
+{% extends 'veteran_app/base.html' %}
+
+{% block content %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="fas fa-database"></i> Data Management - SuperUser Panel</h2>
+                <p class="text-muted mb-0">Manage ranks, branches, and media statistics</p>
+            </div>
+            <a href="{% url 'manage_carousel' %}" class="btn btn-info">
+                <i class="fas fa-images"></i> Manage Carousel
+            </a>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Media Statistics -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card hover-lift">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-chart-bar"></i> Media & Attachment Statistics</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="text-primary">{{ media_stats.total_members }}</h3>
+                                    <p class="text-muted">Total Members</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="text-success">{{ media_stats.members_with_attachments }}</h3>
+                                    <p class="text-muted">With Attachments</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="text-warning">{{ media_stats.members_without_attachments }}</h3>
+                                    <p class="text-muted">Without Attachments</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="text-info">{{ media_stats.attachment_percentage }}%</h3>
+                                    <p class="text-muted">Attachment Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ media_stats.attachment_percentage }}%">
+                                    {{ media_stats.attachment_percentage }}% Attached
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Ranks Section -->
+            <div class="col-md-6">
+                <div class="card hover-lift">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-medal"></i> Ranks Management</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'add_rank' %}" class="mb-3">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                {{ rank_form.name }}
+                                <button type="submit" class="btn btn-primary">Add Rank</button>
+                            </div>
+                        </form>
+                        
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-medal"></i> Rank Name</th>
+                                        <th><i class="fas fa-cog"></i> Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rank in ranks %}
+                                    <tr>
+                                        <td>{{ rank.name }}</td>
+                                        <td>
+                                            <a href="{% url 'delete_rank' rank.id %}" 
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Delete {{ rank.name }}?')">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="2">No ranks found</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branches Section -->
+            <div class="col-md-6">
+                <div class="card hover-lift">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-code-branch"></i> Branches Management</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'add_branch' %}" class="mb-3">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                {{ branch_form.name }}
+                                <button type="submit" class="btn btn-primary">Add Branch</button>
+                            </div>
+                        </form>
+                        
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-code-branch"></i> Branch Name</th>
+                                        <th><i class="fas fa-cog"></i> Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for branch in branches %}
+                                    <tr>
+                                        <td>{{ branch.name }}</td>
+                                        <td>
+                                            <a href="{% url 'delete_branch' branch.id %}" 
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Delete {{ branch.name }}?')">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="2">No branches found</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<style>
+.stat-item {
+    padding: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-item h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.progress {
+    height: 25px;
+    border-radius: 15px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 15px;
+    font-weight: bold;
+    line-height: 25px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 15px;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    border: none;
+}
+</style>
+{% endblock %}

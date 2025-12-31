@@ -1,0 +1,1 @@
+web: python manage.py migrate && python manage.py collectstatic --noinput && python manage.py seed_data && gunicorn veteran_project.wsgi --bind 0.0.0.0:$PORT

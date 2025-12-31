@@ -1,0 +1,429 @@
+{% extends 'veteran_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="state-head-image me-3">
+                                {% if user.state_profile.profile_photo %}
+                                    <img src="{{ user.state_profile.profile_photo.url }}" 
+                                         alt="{{ user.username }}" 
+                                         class="rounded-circle" 
+                                         style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff;">
+                                {% else %}
+                                    <div class="state-head-placeholder rounded-circle" 
+                                         style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; border: 3px solid #fff;">
+                                        <i class="fas fa-user-tie fa-2x text-white"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h2 class="mb-1"><i class="fas fa-flag me-2"></i>{{ state.name }} Dashboard</h2>
+                                <p class="mb-0 text-light">Welcome back, {{ user.username }}! Here's your state overview.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge bg-primary fs-6">
+                                <i class="fas fa-calendar"></i> {{ current_date|date:"l, F d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">Total Members</h6>
+                            <h2 class="card-title mb-0">{{ stats.total_members }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-users fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">Active Members</h6>
+                            <h2 class="card-title mb-0">{{ stats.active_members }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-user-check fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">Pending Approval</h6>
+                            <h2 class="card-title mb-0">{{ stats.pending_members }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">This Month</h6>
+                            <h2 class="card-title mb-0">{{ stats.this_month_members }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-calendar-plus fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Left Column: Calendar and Quick Actions -->
+        <div class="col-md-4 mb-4">
+            <!-- Calendar Widget -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Calendar - {{ current_date|date:"F Y" }}</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="calendar-container" class="p-3">
+                        <!-- Calendar will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'state_members' state.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list"></i> View All Members
+                        </a>
+                        <a href="{% url 'add_member' state.id %}" class="btn btn-outline-success">
+                            <i class="fas fa-user-plus"></i> Add New Member
+                        </a>
+                        <a href="{% url 'download_members' state.id %}" class="btn btn-outline-info">
+                            <i class="fas fa-download"></i> Download CSV
+                        </a>
+                        {% if user.is_superuser %}
+                        <a href="{% url 'manage_users' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-users-cog"></i> Manage Users
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Recent Activity and Charts -->
+        <div class="col-md-8">
+            <!-- Recent Members -->
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Recent Members</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_members %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Rank</th>
+                                    <th>Service Number</th>
+                                    <th>Status</th>
+                                    <th>Added On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for member in recent_members %}
+                                <tr>
+                                    <td>{{ member.name }}</td>
+                                    <td>{{ member.rank }}</td>
+                                    <td>{{ member.service_number }}</td>
+                                    <td>
+                                        {% if member.approved %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ member.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'edit_member' member.association_id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i> No members added yet. Click "Add New Member" to get started!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Member Distribution Chart -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Member Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-center mb-3">Membership Status</h6>
+                            <div style="position: relative; height: 250px;">
+                                <canvas id="membershipChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-center mb-3">Approval Status</h6>
+                            <div style="position: relative; height: 250px;">
+                                <canvas id="approvalChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Announcement Section -->
+    <div class="row mt-4 mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Post State Announcement</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'post_announcement' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Title</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Type</label>
+                                <select name="notification_type" class="form-select">
+                                    <option value="info">Information</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="success">Success</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea name="message" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" name="expiry_date" class="form-control" required>
+                            <small class="text-muted">Message will stop displaying after this date</small>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-1"></i>Post Announcement
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .calendar {
+        width: 100%;
+    }
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+    }
+    .calendar-day-header {
+        text-align: center;
+        font-weight: bold;
+        padding: 8px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        font-size: 0.85em;
+    }
+    .calendar-day {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .calendar-day:hover {
+        background-color: #e9ecef;
+    }
+    .calendar-day.today {
+        background-color: #0d6efd;
+        color: white;
+        font-weight: bold;
+    }
+    .calendar-day.other-month {
+        color: #adb5bd;
+    }
+    .calendar-day.empty {
+        border: none;
+        cursor: default;
+    }
+</style>
+
+<!-- JavaScript for Calendar and Charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Calendar Generation
+    function generateCalendar() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const today = now.getDate();
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDayOfWeek = firstDay.getDay();
+        
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"];
+        
+        let calendarHTML = `
+            <div class="calendar">
+                <div class="calendar-header">
+                    <span>${monthNames[month]} ${year}</span>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+        `;
+        
+        // Empty cells before first day
+        for (let i = 0; i < startingDayOfWeek; i++) {
+            calendarHTML += '<div class="calendar-day empty"></div>';
+        }
+        
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const isToday = day === today ? 'today' : '';
+            calendarHTML += `<div class="calendar-day ${isToday}">${day}</div>`;
+        }
+        
+        calendarHTML += '</div></div>';
+        document.getElementById('calendar-container').innerHTML = calendarHTML;
+    }
+    
+    // Membership Chart
+    const membershipCtx = document.getElementById('membershipChart').getContext('2d');
+    new Chart(membershipCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Active Members', 'Inactive Members'],
+            datasets: [{
+                data: [{{ stats.active_members }}, {{ stats.inactive_members }}],
+                backgroundColor: ['#28a745', '#dc3545'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Approval Chart
+    const approvalCtx = document.getElementById('approvalChart').getContext('2d');
+    new Chart(approvalCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Approved', 'Pending'],
+            datasets: [{
+                data: [{{ stats.approved_members }}, {{ stats.pending_members }}],
+                backgroundColor: ['#0d6efd', '#ffc107'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Generate calendar on page load
+    document.addEventListener('DOMContentLoaded', generateCalendar);
+</script>
+
+
+
+{% endblock %}
